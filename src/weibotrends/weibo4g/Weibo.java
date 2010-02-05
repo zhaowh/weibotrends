@@ -156,7 +156,8 @@ public class Weibo implements java.io.Serializable {
 		List<Future<HTTPResponse>> respList  = new ArrayList<Future<HTTPResponse>>();
 		Paging paging;
 		
-		int maxPage = sinceId==0?10:5; //最多取500条
+		//int maxPage = sinceId==0?10:5; //最多取500条
+		int maxPage = sinceId==0?5:2;  //TODO 临时修改，用于申请读权限
 		
 		for (int i=1; i<=maxPage; i++){
 			if (sinceId > 0){
@@ -183,15 +184,6 @@ public class Weibo implements java.io.Serializable {
 						}
 				)
 		);
-		//suggestions favorites
-		respList.add(
-				client.getAsync(
-					WeiboConfig.getValue("baseURL") + "suggestions/favorites/hot.json",
-					new PostParameter[] {
-							new PostParameter("count", "50")
-						}
-				)
-		);
 		//suggestions statuses reorder
 		respList.add(
 				client.getAsync(
@@ -202,6 +194,15 @@ public class Weibo implements java.io.Serializable {
 						}
 				)
 		);			
+		//suggestions favorites
+		respList.add(
+				client.getAsync(
+					WeiboConfig.getValue("baseURL") + "suggestions/favorites/hot.json",
+					new PostParameter[] {
+							new PostParameter("count", "50")
+						}
+				)
+		);
 		return respList;
 	}	
 	

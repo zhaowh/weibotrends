@@ -216,6 +216,6 @@
 			<!-- end footer --> 
 		</div> 
 	</div> 
-
+<script src="http://tjs.sjs.sinajs.cn/t35/apps/opent/js/frames/client.js" language="JavaScript"></script>
 </body> 
 </html> 
