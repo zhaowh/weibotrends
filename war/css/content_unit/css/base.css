@@ -1,0 +1,55 @@
+﻿@charset "utf-8";
+/**
+* @xweibo component
+* @xweibo 输出挂件的公用样式设置
+*/
+
+/* reset css */
+body,p,ul,li {margin:0;padding:0;}
+body{font:12px/1.5 Tahoma, Geneva, sans-serif; word-wrap:break-word; word-break:break-all;}
+li{ list-style:none;}
+a {text-decoration:none;outline:none;}
+.weibo-main a:hover {text-decoration:underline;}
+img {border:none;}
+
+/* 导入背景图片 */
+.arrow-icon {background:url(bgimg/ico_tblog_arrow.gif) no-repeat;}
+
+/* 微博 */
+	/* 上下边框 */
+	.wrap-top,.wrap-bottom {display:block;margin:0 1px;height:1px;overflow:hidden;}
+	/* 上下箭头 */
+	.arrow-up,.arrow-down{display:block;padding-top:3px;height:7px;text-align:center;_font-size:0;}
+	/* 微博标题 */
+	.weibo-title {height:30px;line-height:30px;overflow:hidden;_zoom:1}
+	.mimi-logo {_display:inline;float:left;margin:5px 10px 0;height:16px;width:19px;background:url(bgimg/logo_mini.png) no-repeat;_position:relative;_background:none; _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="css/bgimg/logo_mini.png", sizingMethod="scale");}
+	.weibo-title a.title {display:inline-block;margin-left:10px;}
+	
+	/* 微博用户 */
+	.weibo-head {padding-top:12px;overflow:hidden;_zoom:1}
+	.user-pic {_display:inline;float:left;margin:0 11px 0 9px;}
+	.user-pic img {padding:1px;height:50px;width:50px;border:1px solid #C1C9CF;}
+	.location {margin-left:2px;}
+	
+	
+	/* 微博列表 */
+	.weibo-main {padding:9px 9px 0;}
+	.weibo-list ul li {padding:8px 0;}
+	.weibo-txt {padding-bottom:5px;} 
+	.weibo-info p {float:right;color:#c6c6c6;}
+	.weibo-info p a {margin:0 5px;}
+
+	.weibo-show, .weibo-topic, .weibo-follow, .weibo-list {overflow:hidden;}
+	.weibo-show h3, .weibo-follow h3, .weibo-topic h3 { margin:0;padding:0;font:700 14px/1.6 "宋体",arial; }
+	.weibo-show .weibo-list ul li,.weibo-topic .weibo-list ul li  {background:url(bgimg/bottom_line.gif) 0 bottom repeat-x;overflow:hidden;_zoom:1;}
+	
+	.weibo-topic .weibo-txt, .weibo-topic .weibo-info {margin-left:74px;}
+	
+	.weibo-follow .weibo-list ul {overflow:hidden;_zoom:1;}
+	.weibo-follow .weibo-list ul li {float:left;margin-left:15px;width:54px;overflow:hidden;text-align:center;}
+	.weibo-follow .weibo-list ul li .user-pic {margin:0;}
+	.weibo-follow .weibo-list ul li .name {display:inline-block;height:18px;width:4em;overflow:hidden;}
+	.weibo-follow .weibo-list ul li .follow {color:#999;}
+	/* xweibo logo */
+	.xweibo {padding:9px;}
+	.xweibo a {display:block;height:18px;width:74px;background:url(bgimg/xweibo_logo_mini.gif) no-repeat;text-indent:-9999em;}

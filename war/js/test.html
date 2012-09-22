@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="common.js"></script>
+</head>
+
+<body>
+<style>
+i{display:inline-block;border:1px solid red;width:10px;height:10px;cursor:pointer;margin:2px;}
+</style>
+<textarea id="area"></textarea>
+<button id="embtn1">表情1</button>
+<input id="input" type="text" />
+<button id="embtn2">表情2</button>
+<div id="test" style="border:1px solid blue;overflow:auto;overflow-y:hidden;width:500px;"><img src="http://ss10.sinaimg.cn/bmiddle/489ab6b0t8808d150ea69&690" /></div>
+<a href="#" onclick="$('#test img').imgRotate('left')">向左</a>
+<a href="#" onclick="$('#test img').imgRotate('right')">向右</a>
+<div id="emlist">sssssssssss<br />sssssssssssssssss<p id="ectn"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></p><br />sssssssssssssssss<br />ssssss</div>
+<div id="drag">
+    aaaaaaaaaaaaaa
+    <div id="da">mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm</div>
+    aaaaaaa<br /><br /><br /><br /><br />
+    aaaaaaaaaaa<br /><br /><br /><br />aaaaaaaaaa
+</div>
+
+<script type="text/javascript">
+
+var win = $('#test').toXwin();
+
+win.config({'showCallback': function(win){
+    setTimeout(function() {win.close()}, 3000);
+}})
+
+win.show();
+
+var emotion = $('#emlist').toEmotion({
+    'emotionArea': $('#ectn')[0]
+});
+$('#embtn1').click(function() {
+    emotion.config({
+        eList:  [["\u8db3\u7403","football.gif"],["\u54e8\u5b50","shao.gif"],["\u7ea2\u724c","redcard.gif"],["\u9ec4\u724c","yellowcard.gif"],["\u54c8\u54c8","laugh.gif"],["\u5475\u5475","smile.gif"],["\u8870","cry.gif"],["\u6c57","sweat.gif"],["\u7231\u4f60","love.gif"],["\u563b\u563b","tooth.gif"],["\u54fc","hate.gif"],["\u5fc3","heart.gif"],["\u6655","dizzy.gif"],["\u6012","angry.gif"],["\u86cb\u7cd5","cake.gif"],["\u82b1","flower.gif"],["\u6293\u72c2","crazy.gif"],["\u56f0","sleepy.gif"],["\u5e72\u676f","cheer.gif"],["\u592a\u9633","sun.gif"],["\u4e0b\u96e8","rain.gif"],["\u6cea","sad.gif"],["\u6708\u4eae","moon.gif"],["\u732a\u5934","pig.gif"],["\u8721\u70db","candle.gif"],["\u4f24\u5fc3","unheart.gif"]],
+        rel: this,
+        input: '#area',
+        ox: this.offsetWidth,
+        oy: this.offsetHeight
+    });
+    emotion.show();
+    return false;
+});
+
+$('#embtn2').click(function() {
+    emotion.config({
+        rel: this,
+        input: '#input',
+        ox: this.offsetWidth,
+        oy: this.offsetHeight
+    });
+    emotion.show();
+    return false;
+});
+
+var drag = $('#drag').toDrag({
+    'dragArea': $('#da')[0]
+});
+
+$('#insert').click(function() {
+    $("#input").insert('插入');
+});
+
+$('#area').bind('keyup', function(e) {
+    //console.log($(this).checkText(2));
+    var last = $(this).checkText();
+    if(last<0) {
+        alert('超出');
+        //e.preventDefault();
+    }else {
+        console.log(last);
+    }
+});
+</script>
+</body>
+
+</html>

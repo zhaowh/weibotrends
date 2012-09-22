@@ -1,0 +1,339 @@
+@charset "utf-8";
+/*
+  维护者：黄晓烽/林毅
+  文档作用：默认样式，定义微博标准版主题相关样式，包括背景、文本颜色、链接颜色、边框等
+*/
+
+html { background-color:#ecf6ff;}
+body { position:relative; z-index:0; color:#333;}
+a { color:#0082cb; text-decoration:none;}
+a:visited { color:#0082cb;}
+a:hover { text-decoration:underline;}
+.sub-link,
+.sub-link:visited{ color:#6eafd5;}
+
+/*导入图片*/
+.skin-bg{ background:url(bgimg/skin_bg.png) no-repeat;}
+.x-bg{ background:url(bgimg/x_bg.png) repeat-x;}
+.feed-list li, .user-list li, .top10 li, .index-default .no-mblog, .comment-list li, .message-list li, .local-list .column-item, .blacklist,.tags-title, .new-tips-fixed h4, .bottom-line, .setting-box strong { background:url(bgimg/bottom_line.gif) repeat-x bottom;}
+.error-bg {background:url(bgimg/error_bg.png) no-repeat;}
+.general-btn, .general-btn span, .general14-btn, .general14-btn span, .post-btn, .post-btn a, .title-tab .tab-current, .title-tab .tab-link, .title-tab .tab-current span, .title-tab .tab-link span, .tags-btn, .tags-btn span{ background:url(bgimg/btn_bg.png) no-repeat;}
+.tab-s1, .tab-s1 .tab-l, .tab-s1 .tab-r, .tab-s1 .current, .tab-s1 .current a, .tab-s1 .cut,
+.tab-s2, .tab-s2 .current, .tab-s2 .current a, .tab-s3 span, .tab-s3 span a, .tab-s3 .current, .tab-s3 .current a, .tab-s5, .tab-s5 .current, .tab-s5 .current a{ background:url(bgimg/tab_bg.png);}
+.share-btn, .say-btn, .addfollow-btn, .followed-btn, .search-area .search-block .s-btn, .find-area .find-block .s-btn, .btn-login, .btn-visit-weibo, .btn-send-mes, .user-head .operated-box .followed-btn
+{background:url(bgimg/skin_btn.png) no-repeat;}
+.tag-t, .tag-b, .bulicity, .user-menu a,.bind-weibo-account, .login-weibo-account, .not-logged h3, .account-login, .user-login-title span{background:url(bgimg/side_bg.png) no-repeat;}
+.pub-bg-x, .search-area .search-block,.find-area .find-block, .title-box {background:url(bgimg/pub_bg_x.png) repeat-x;}
+
+#wrapper{ background:url(bgimg/x_bg.png) repeat-x;}
+#container{ background:#fff url(bgimg/user_y_bg.png) repeat-y right; border-top:3px solid #daebfa; -webkit-border-radius:0 0 5px 5px; -moz-border-radius:3px 3px 5px 5px;}
+#pub #container{ border-top:none; -webkit-border-radius:0 0 5px 5px; -moz-border-radius:0 0 5px 5px;}
+#pub #container, #user-recommend #container{ background:#fff url(bgimg/skin_y_bg.png) repeat-y right;}
+#footer{ color:#707070;}
+#footer a{ color:#707070;}
+
+/*导航菜单*/
+.nav{ color:#c2c2c2;}
+.nav .nav-bg{ position:absolute; top:0; left:0; width:100%; height:30px; background-color:#e9f5ff; filter:alpha(opacity=85); opacity:0.85; }
+.nav a{ color:#707070;}
+.nav a:visited{ color:#707070;}
+.nav .defined-link a {}
+.nav .defined-link a:hover,
+.nav .user-link a:hover { background-color:#5fabef; color:#fff; -webkit-border-radius:2px; -moz-border-radius:2px;}
+
+/*搜索*/
+.search-box{ background-position:0 -653px;}
+.search-box-focus{ color:#333; background-position:0 -689px;}
+.search-box-focus .search-input{ color:#333;}
+.search-input{ color:#999;}
+.search-btn{ background-position:-133px -654px;}
+.search-btn:hover { background-position:-174px -654px;}
+
+/*新消息提示*/
+.new-tips, .new-tips-fixed{ background:#fffad2; border:1px solid #f3e8b3; -webkit-border-radius:3px; -moz-border-radius:3px;}
+.new-tips a, .new-tips a:visited, .new-tips-fixed{ color:#666;}
+.new-tips a:hover, .new-tips-fixed a:hover{ color:#2276bb; text-decoration:underline;}
+.new-tips-fixed a, .new-tips-fixed a:visited{ color:#2276bb; text-decoration:none;}
+.new-tips-fixed a:hover{ text-decoration:underline;}
+
+/*导航菜单*/
+.own .menu .menu-home, #pub .menu-pub, #user-recommend .menu-user, #weibo .menu-weibo{ font-weight:bold;}
+.menu a{ color:#fff;}
+.menu a:visited{ color:#fff;}
+.menu .menu-bg{ background-position:0 -597px;}
+.menu .menu-arrow{ background-position:-400px -597px;}
+
+
+/*微博发布框*/
+.post-box .key-tips{ color:#adc0c9;}
+.post-box .key-tips span{ font-size:26px; font-family:"Constantia", Times, serif;}
+.post-box .key-tips.out140{ padding-left:20px; background-position:-1px -282px; color:#ff0000;}
+.post-box .post-textarea{ background-position:-9999px 0;}
+.post-box .post-focus{ background-position:-1px -201px;}
+.post-box .add-area a{ color:#333;}
+.post-box .add-area a:hover{ color:#2276bb;}
+.post-box .share-btn{ background-position:0 -41px;}
+.post-box .share-btn:hover{ background-position:-126px -41px;}
+.post-box .share-btn-disable{ background-position:-252px -41px; cursor:default;}
+.post-box .share-btn-disable:hover{ background-position:-252px -41px; cursor:default;}
+
+/*微博列表*/
+.feed-list .new-feed{ background-color:#fffad2; color:#9b8a46; border:1px solid #f5edc2; -webkit-border-radius:3px; -moz-border-radius:3px;}
+.feed-list .new-feed:hover{ background-color:#fef6b7; border-color:#eee09f; text-decoration:underline; color:#a58d2f;}
+.feed-list .new-feed:visited{ color:#a49147;}
+.feed-list .feed-tit{ border-bottom:1px solid #eaeaea;}
+.feed-list .feed-filter{ color:#d0d0d0;}
+.feed-list .feed-filter strong{ color:#444;}
+.feed-list .feed-img img{ background:#fff; border:1px solid #c1c9cf;}
+.feed-list .feed-info p{ color:#dcdcdc;}
+.feed-list .feed-info p a{ color:#6aa6ce;}
+.feed-list .feed-info span{ color:#999;}
+.feed-list .feed-info span a{ color:#6aa6ce;}
+.feed-list .feed-info span a:hover{ color:#188fb1;}
+.feed-list .unread{ background-color:#f0f0f0;}
+.feed-comment .comment-content p{ color:#707070;}
+.feed-comment .comment-content div{ color:#dcdcdc;}
+.feed-comment ul{ background:url(bgimg/bottom_line.gif) repeat-x top;}
+
+/*微博评论*/
+.post-comment .keyin-tips{ color:#999;}
+.post-comment .keyin-tips.over-limit{ color:#FF0000;}
+
+/*用户概述*/
+.user-preview .user-total-box div{ border-left:1px solid #d8d8d8;}
+.user-preview .user-total-box a{ color:#0082cb;}
+.user-preview .user-total-box a:hover{ color:#0082cb;}
+
+/*推荐区*/
+.bulicity{ margin:auto; width:180px; height:25px; line-height:25px; background-position:0 -0; overflow:hidden;}
+.bulicity a{ margin:0 8px;}
+
+/*用户菜单*/
+.user-menu a{ background-position:0 -174px; _background-position:0 -173px;}
+#home .home-current, #atme .atme-current, #comments .comment-current, #favs .favs-current, #messages .messages-current { height:35px; line-height:35px; background-position:0 -134px; color:#fff; font-weight:bold; position:relative; top:-1px;}
+
+/*个人标签*/
+.user-tag .tag-t{ height:10px; background-position:0 -59px; _font-size:0;}
+.user-tag .tag-m{ padding:0 10px; background-color:#fff9de;}
+.user-tag .tag-b{ height:30px; background-position:0 -84px;}
+.user-tag .tag-tit a{ color:#666;}
+.user-tag .tag-tit a:visited{ color:#666;}
+
+/*右边栏用户列表*/
+.user-sidebar li img{ border:1px solid #c1c9cf;}
+
+/*右边栏排行榜*/
+.top10 .ranking{ background-position:10000px -824px; color:#999;}
+.top10 .r-1{ background-position:0 -730px; color:#f00;}
+.top10 .r-2, .top10 .r-3{ background-position:-24px -730px; color:#f60;}
+.top10 span{ color:#707070;}
+
+/*用户介绍*/
+.user-head .opera-area{ color:#cecece;}
+.user-head .cancel, .user-head .cancel:visited{ color:#666;}
+.user-head .icon-each-follow{ color:#999;}
+.user-head .more-list{ background:#fff; border:1px solid #9fc8eb;}
+.user-head .more-list a:hover{ background-color:#e5f1fd;}
+.user-head .operated-box{ float:left; padding:3px 8px; border:1px solid #e6e6e6; line-height:14px; background-color:#f8f8f8;}
+.user-head .operated-box .followed-btn{ width:48px; height:auto; background-position:-243px -3px; text-indent:12px; color:#999;}
+/*微博提示*/
+.weibo-notice{ background-color:#fffad2; border:1px solid #f5edc2;}
+.weibo-notice .login-notice{ color:#444;}
+.weibo-notice .copyright{ color:#7d7d7d;}
+
+/*标题框*/
+.title-box{ height:39px; background-position:0 -185px;}
+.title-box h3{}
+/*列表操作处理*/
+.list-handle em{ color:#dcdcdc;}
+
+/*用户列表*/
+.user-list .u-info a{ color:#6eafd5;}
+
+/*微博详细页发表评论*/
+.add-comment .title {background-color:#ecf6ff;}
+.add-comment .comment-r .keyin-tips{ color:#999;}
+.add-comment .comment-r .keyin-tips.over-limit{ color:#f00;}
+
+/*默认搜索显示*/
+.search-default p span{ color:#f00;}
+
+/*普通用户登录*/
+.account-login {background-position:0 -256px;}
+.user-login-title span{background-position:0 -221px;}
+
+/*引导页*/
+#guide-page .main {}
+#guide-page #container { padding-top:60px; background:#fff url(bgimg/guide_bg.png) no-repeat!important;_zoom:1;}
+
+/*搜索和找人*/
+#search .say-btn {margin-top:0;}
+.search-area {background:url(bgimg/search_bg.png) right top no-repeat;}
+.find-area {background:url(bgimg/find_bg.png) right top no-repeat;}
+.search-area .search-block,.find-area .find-block {background-position:0 -128px;border:1px solid #77ce3d;border-radius:3px;-moz-border-radius:3px;}
+.search-area .search-block .input-txt,.find-area .find-block .input-txt {border:1px solid;border-color:#929292 #d5d5d5 #d5d5d5 #929292;color:#999;vertical-align:top;margin-right:3px;}
+.search-area .search-block .s-btn{ background-position:0 -141px;display:inline-block; height:38px; text-indent:-9999px;width:83px;line-height:0;vertical-align:top;outline:none;cursor:pointer;}
+.search-area .search-block .s-btn:hover {background-position:-103px -141px;}
+.find-area .find-block .s-btn{ background-position:0 -199px;display:inline-block; height:38px; text-indent:-9999px;width:83px;line-height:0;vertical-align:top;outline:none;cursor:pointer;}
+.find-area .find-block .s-btn:hover {background-position:-103px -199px;}
+.find-area .find-tips span {color:#f00;font-size:12px;}
+
+/*微博广场*/
+	/*导入图片*/
+	.hot-topic .column-title .sendBtn{ background:url(bgimg/pub_bg.png) no-repeat; }
+	.hot-topic{ background-color:#f4faff; border:1px solid #a8cae7;}
+	.hot-topic .column-title .sendBtn{ background-position:0 0;}
+	.hot-topic .column-title .theme { color:#707070;}
+	.recommand-list a.leftBtn { background-position:0 -49px;}
+	.recommand-list a.rightBtn { background-position:-68px -49px;}
+	.recommand-list .info{ color:#999;}
+
+
+/*浮层类*/
+	.win-post .post-box .post-textarea{ background-position:2px -319px;}
+	.win-post .post-box .post-focus{ background-position:0 -439px;}
+
+	.win-bind-login .win-con-in{background:url(bgimg/bind_login_bg.png) no-repeat;}
+
+/*公用类*/
+	/*头像样式*/
+	.user-pic img{ border:1px solid #c1c9cf; background:#fff;}
+	/*box框样式*/
+	.box-style .box-content{ border:solid #dcdcdc; border-width:0 1px; background:#f6f6f6; _zoom:1;}
+	.box-style .box-t{ background-position:left -557px;}
+	.box-style .box-t span{ display:block; margin-left:3px; background-position:right -560px;}
+	.box-style .box-b{ background-position:left -563px;}
+	.box-style .box-b span{ display:block; margin-left:3px; background-position:right -566px;}
+	.box-style .box-arrow{ background-position:0 -569px;}
+	
+	/*返回顶部图标*/
+	.icon-gotop{ padding-left:16px; background-position:-588px -650px;*display:inline-block;}
+	
+	/*通用12号字体按钮*/
+	.general-btn{ display:inline-block; height:23px; line-height:23px; background-position:left -56px;}
+	.general-btn span{ float:left; _display:inline; margin-left:4px; padding:0 18px 0 14px; height:23px; background-position:right -84px; color:#555; cursor:pointer;}
+	.general-btn:hover{ background-position:left -112px; text-decoration:none;}
+	.general-btn:hover span{ background-position:right -140px;}
+	.general-btn.highlight{ background-position:left 0;}
+	.general-btn.highlight span{ background-position:right -28px;}
+	.general-btn-disabled{ background-position:left -168px; cursor:default;}
+	.general-btn-disabled span{ background-position:right -196px; color:#999; cursor:default;}
+	.general-btn-disabled:hover{ background-position:left -168px; cursor:default;}
+	.general-btn-disabled:hover span{ background-position:right -196px; color:#999; cursor:default;}
+	/*通用14号字体按钮*/
+	.general14-btn{ display:inline-block; height:27px; line-height:27px; background-position:left -224px;vertical-align:top;_margin-top:1px}
+	.general14-btn span{ float:left; _display:inline; margin-left:5px; padding:0 18px 0 14px; height:27px; background-position:right -256px; color:#000; cursor:pointer;}
+	.general14-btn:hover{ background-position:left -288px; text-decoration:none;}
+	.general14-btn:hover span{ background-position:right -320px; color:#000;}
+	.general14-btn-disabled{ background-position:left -352px; cursor:default;}
+	.general14-btn-disabled span{ background-position:right -384px; color:#888; cursor:default;}
+	/*我也说几句 按钮*/
+	.say-btn { float:right; width:110px; height:28px; margin:4px 8px 0 0; text-indent:-9999px; outline:none; background-position:0 -95px;}
+	.say-btn:hover{ background-position:-121px -95px;}
+	/*加关注和已关注按钮*/
+	.addfollow-btn, .followed-btn{ display:block; width:58px; height:21px; background-position:0 0; text-indent:-9999px; outline:none;}
+	.addfollow-btn:hover{ background-position:-78px 0;}
+	.followed-btn{ background-position:-156px 0;}
+	/*立即登录按钮*/
+	.btn-login{ display:block; width:126px; height:37px; background-position:0 -318px;}
+	.btn-login:hover{ background-position:-141px -318px;}
+	.btn-visit-weibo{ display:block; margin:auto; width:130px; height:41px; background-position:0 -256px; text-indent:-9999px; outline:none;}
+	.btn-visit-weibo:hover{ background-position:-150px -256px;}
+	/*发私信按钮*/
+	.btn-send-mes{ float:right; margin:6px 10px 0 0; width:70px; height:27px; background-position:0 -376px; text-indent:-9999px; outline:none;}
+	.btn-send-mes:hover{ background-position:-90px -376px;}
+	
+	/*通用tab标签*/
+	.title-tab{ border-bottom:3px solid #4ebbe6;}
+	.title-tab .tab-current, .title-tab .tab-link{ display:inline-block; height:33px; text-align:center; font:14px/33px Tahoma, Geneva, sans-serif;}
+	.title-tab .tab-current span, .title-tab .tab-link span{ display:inline-block; margin-left:4px; padding:0 15px 0 11px;}
+	.title-tab .tab-link{ background-position:left -492px; color:#333;}
+	.title-tab .tab-link span{ background-position:right -530px; cursor:pointer;}
+	.title-tab .tab-link:hover{ background-position:left -568px; text-decoration:none;}
+	.title-tab .tab-link:hover span{ background-position:right -606px;}
+	.title-tab .tab-link:visited{ color:#333;}
+	.title-tab .tab-current{ background-position:left -416px; font-weight:bold; color:#fff;}
+	.title-tab .tab-current span{ background-position:right -454px;}
+	.title-tab .tab-current:hover{ background-position:left -416px; }
+	.title-tab .tab-current span:hover{ background-position:right -454px;}
+	/*第一种tab样式 tab-style-1简写tab-s1*/
+	.tab-s1{ position:relative; margin:auto; width:800px; height:38px; overflow:hidden;}
+	.tab-s1 span{ float:left; margin:5px 0 0 10px;; height:33px; line-height:33px; font-size:14px;}
+	.tab-s1 span a{ margin:0 5px; padding:0 20px 0 15px; color:#000; outline:none;}
+	.tab-s1 span a:hover{ color:#0082cb;}
+	.tab-s1 span a:visited{ color:#000;}
+	.tab-s1 .tab-l{ position:absolute; left:0; top:0; width:9px; height:38px; background-position:-18px -53px;}
+	.tab-s1 .tab-r{ position:absolute; right:0; top:0; width:9px; height:38px; background-position:-27px -53px;}
+	.tab-s1 .current{ background-position:left -53px;}
+	.tab-s1 .current a{ display:block; background-position:right -101px; font-weight:700;}
+	.tab-s1 .cut{ background-position:right -53px;}
+	/*第二种tab样式*/
+	.tab-s2{ padding-left:15px; height:32px; line-height:32px; background-position:0 -149px;}
+	.tab-s2 span{ float:left; margin-right:10px; font-size:14px;}
+	.tab-s2 span a{ margin:0 5px; padding:0 20px 0 15px; color:#000;}
+	.tab-s2 .current{ background-position:left -196px; font-weight:700;}
+	.tab-s2 .current a{ display:block; background-position:right -243px; outline:none;}
+	.tab-s2 .send-weibo {background-position:-552px -822px;float:right;height:26px;width:100px;}
+	/*第三种tab样式*/
+	.tab-s3{ padding-left:15px; height:31px; line-height:32px; background-color:#fff;border-bottom:1px solid #ccc;}
+	.tab-s3 span{ background-position:left -288px;float:left;position:relative;_top:1px; font-size:12px;}
+	.tab-s3 span a{ display:block;background-position:right -328px;margin:0 5px; padding:0 20px 0 15px; color:#0082cb;}
+	#person .tab-s3 .person-current, #modify .tab-s3 .modify-current, #display .tab-s3 .display-current, #blacklist .tab-s3 .blacklist-current, #warn .tab-s3 .warn-current, #account-set .tab-s3 .account-current { background-position:left -368px;float:left; font-weight:700;}
+	#person .tab-s3 .person-current a, #modify .tab-s3 .modify-current a, #display .tab-s3 .display-current a, #blacklist .tab-s3 .blacklist-current a, #warn .tab-s3 .warn-current a, #account-set .tab-s3 .account-current a{display:inline-block; background-position:right -408px;overflow:hidden;height:32px;color:#000;}
+	/*第四种tab样式*/
+	.tab-s4{margin-top:15px; background:url(bgimg/tab_s4_bg.jpg) bottom no-repeat;}
+	.tab-s4 a{ display:inline-block; padding:2px 7px 3px; margin-bottom:5px; }
+	.tab-s4 .current, .tab-s4 .current:visited{ background:#5fabef; color:#fff; -webkit-border-radius:2px; -moz-border-radius:2px;}
+	#guide-page .tab-s4{ background:url(bgimg/tab_s4_bg_g.png) bottom no-repeat;}
+	/*第五种tab样式（用于换肤弹出层）*/
+	.tab-s5{ padding-top:3px; height:35px; line-height:32px; background-color:#fff; background-position:0 -452px;}
+	.tab-s5 .tab-s5-in{ position:relative; margin:auto; width:800px;}
+	.tab-s5 span{ float:left; font-size:14px;}
+	.tab-s5 span a{ margin:0 5px; padding:0 18px 0 13px; color:#000; outline:none;}
+	.tab-s5 .current{ background-position:left -502px; font-weight:700;}
+	.tab-s5 .current a{ display:block; background-position:right -549px;}
+	/*弹出浮层tab样式*/
+	.win-tab{ margin:10px 10px 0; padding-bottom:5px;}
+	.win-tab a{ display:inline-block; padding:2px 7px; line-height:16px; }
+	.win-tab .current, .win-tab .current:visited { background:#5fabef; color:#fff; -webkit-border-radius:2px; -moz-border-radius:2px;}
+	
+	/*标题样式*/
+	.tit-s1{ border-bottom:1px solid #eaeaea;}
+	.tit-s1 h3{ padding-bottom:6px; font-size:14px;}
+	
+	/*个人设置校验框样式*/
+	.tips-wrong {background-color:#ffdbdb;border:1px solid #f00;}
+	.tips-warn {background-color:#fffad2;border:1px solid #e8b732;}
+	
+	/*个人设置的子菜单*/
+	.sub-menu a {-webkit-border-radius:2px; -moz-border-radius:2px;}
+	.sub-menu a:hover, .sub-menu a.current {background-color:#5fabef;color:#fff;text-decoration:none;}
+
+	/*标签*/
+	.set-tags p {color:#333;font-size:14px;line-height:1.8;}
+	.tags-box {width:713px;overflow:hidden;}
+
+	.tags-box .top, .tags-box .bot {background:url(bgimg/tags_bg.png) no-repeat;font-size:0;line-height:0;overflow:hidden;width:713px;}
+	.tags-box .top {background-position:0 0;height:3px;}
+	.tags-box .bot {background-position:0 -2px;height:10px;}
+	.tags-box .mid {background:url(bgimg/tags_bg_y.png) repeat-y;width:713px;min-height:138px;}
+	.tags-input .input-txt {border:1px solid #c4c7bd;}
+	.tags-field p {color:#f00;font-size:12px;line-height:1.5;}
+
+	.tags-interest .select-tags p {color:#000;font-size:12px;text-indent:2em;}
+	.tags-interest a {padding:2px 8px;-webkit-border-radius:2px; -moz-border-radius:2px;line-height:18px;display:inline-block;}
+	.tags-interest a span {color:#ccc;margin-right:3px;}
+	.tags-interest a:hover {background-color:#5fabef;color:#fff;text-decoration:none;}
+	.tags-interest a:hover span {color:#fff;}
+
+	.tags-area .tags-list li .a1 {padding:0 7px;background-color:#eaeaea;color:#0082cb;display:inline-block;line-height:19px;vertical-align:top;*zoom:1;}
+	.tags-area .tags-list .a1:hover {background:#5fabef;color:#fff;text-decoration:none;}
+	.tags-area .tags-list .close-icon {background-position:0 -712px;height:19px;width:22px;display:inline-block;}
+	.tags-area .tags-list .close-icon:hover {background-position:0 -736px;height:19px;width:22px;cursor:pointer;}
+	.about-tags-list p {color:#999;font-size:12px;line-height:20px;font-family:"宋体"}	
+
+	/*文本框的默认，经过，禁用样式*/
+	.style-normal {background-color:#fcfcfc;border:1px solid;border-color:#999 #cecece #cecece #999;color:#999;}
+	.style-focus {background-color:#f3ffe5;border:1px solid;border-color:#90c345 #b2d778 #b2d778 #90c345;color:#000;}
+	.style-disabled {background-color:#e9e9e9;border:1px solid #ccc;color:#666;}
+

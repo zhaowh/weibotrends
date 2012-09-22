@@ -1,0 +1,73 @@
+@charset "utf-8";
+/*
+  维护者：黄晓烽
+  文档作用：微博广场页面的CSS。
+*/
+
+/*导入图片*/
+	.hot-total{ background:url(bgimg/skin_bg.png) no-repeat; }
+	.column-title, .tit-s1{ background:url(bgimg/pub_bg_x.png) repeat-x;}
+
+#pub #container {padding-top:1px;}
+#pub .main { padding:0 25px 50px;}
+ 
+ /*栏目模块*/
+.column-title { height:30px; border:1px solid #d7e1eb; line-height:30px; text-indent:10px; background-position:0 -49px;}
+.column-title h3{ font-size:14px; font-weight:700;}
+.column-body { padding:0 18px;}
+.column-item .side { float:left;}
+.column-item .content { margin-left:70px;}
+
+ /*今日话题*/
+.hot-topic{ margin:25px 0; padding:1px; background-color:#f4faff; border:1px solid #a8cae7;}
+.hot-topic .column-title { position:relative; height:39px; border:0; line-height:39px; overflow:hidden; background-position:0 0; }
+.hot-topic .column-title h3 { float:left; font-size:14px; font-weight:700;}
+.hot-topic .column-title .theme { float:left;width:270px; color:#707070;overflow:hidden;}
+.hot-topic .column-title .theme a { margin-left:10px;}
+.hot-topic .column-body { position:relative; height:135px; background:url(bgimg/hot_topic_bg.png) right bottom no-repeat; _zoom:1;}
+.hot-topic .column-item { position:absolute; top:17px; left:14px; width:520px; }
+.hot-topic .content { margin-right:90px; height:105px;}
+.hot-topic .nick { font-size:14px;}
+.hot-topic .info { margin:2px 0 8px;}
+.hot-topic .info .location{ margin-right:10px;}
+.hot-topic .column-body .next { position:absolute; top:19px; display:none; width:100%;}
+.hot-topic .addfollow-btn, .hot-topic .followed-btn { float:right; margin-top:20px;}
+*html .hot-topic .column-body { zoom:1;}
+.hot-topic .feedback { color:#707070;}
+
+/*热门转发*/
+.hot-mblog {margin-top:30px;}
+.hot-mblog .feed-list{ padding:5px 0;}
+.hot-mblog .feed-list .feed-content{ margin-left:80px;}
+.hot-mblog .hot-total{ float:left; width:66px; height:49px; background-position:-400px -653px; text-align:center;}
+.hot-mblog .hot-total strong{ display:block; height:29px; font-size:19px;}
+
+/*城市切换*/
+.change-city{ position:relative; float:right; padding-right:10px; z-index:10000;}
+.change-city .city span{ margin:0 10px;}
+.change-city .city a{ margin:0 5px;}
+
+/*广场微博列表*/
+.pub-feed-list{ margin-top:30px;}
+.pub-feed-list .feed-list{ padding:5px 5px 0;}
+
+/*更多官方微博*/
+.more-mbloger{ position:relative; margin:15px;}
+.more-mbloger span{ position:absolute; left:0; top:0; color:#999;}
+.more-mbloger .content{ margin-left:66px;}
+.more-mbloger .content a{ margin-right:20px;}
+
+/*标题栏*/
+.tit-s1{ padding-left:20px; height:32px; border:1px solid #e4eaef; line-height:32px; background-position:0 -89px; color:#c2c2c2;}
+.tit-s1 h3{ display:inline; margin:0 10px; font-size:14px; color:#000;}
+.tit-s1 a{ margin:0 10px; font-size:14px;}
+
+/*话题排行榜*/
+.ranking-topic{}
+.ranking-topic .r-t-con{ overflow:hidden;}
+.ranking-topic .r-t-item{ float:left; margin-right:22px; _display:inline;}
+.ranking-topic .r-t-item .top10{ margin:25px 0 15px; width:235px; }
+.ranking-topic .sidebar-head{ margin-right:20px; margin-bottom:0; height:30px; line-height:30px; border-bottom:2px solid #dbe2e8; text-indent:10px;}
+.ranking-topic .r-t-item .top10 ul{ padding-top:10px; padding-right:20px; border-right:1px solid #ecf6ff;}
+.ranking-topic .last-item{ margin-right:0;}
+.ranking-topic .last-item .top10 ul{ border-right:none; }

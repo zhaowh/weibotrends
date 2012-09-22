@@ -1,0 +1,7 @@
+modified:
+
+weibo4j.model.Visible  		+ implements java.io.Serializable 
+weibo4j.http.AccessToken  	+ public String getUid(){
+weibo4j.http.Response 		- org.apache.log4j.Logger + java.util.logging.Logger
+							- log.debug + log.fine
+weibo4j.Oauth				- sun.misc.BASE64Decoder + org.apache.commons.codec.binary.Base64

@@ -1,0 +1,129 @@
+#
+# An unexpected error has been detected by Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x6d9e9427, pid=5064, tid=5484
+#
+# Java VM: Java HotSpot(TM) Client VM (11.3-b02 mixed mode, sharing windows-x86)
+# Problematic frame:
+# V  [jvm.dll+0x139427]
+#
+# If you would like to submit a bug report, please visit:
+#   http://java.sun.com/webapps/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x02ebfc00):  VMThread [stack: 0x02fa0000,0x02ff0000] [id=5484]
+
+siginfo: ExceptionCode=0xc0000005, reading address 0x4000005c
+
+Registers:
+EAX=0x2318b528, EBX=0x00304e38, ECX=0x2b7dfc10, EDX=0x3ffffffc
+ESP=0x02fefba8, EBP=0x22ec0000, ESI=0x6dac5074, EDI=0x6dac5074
+EIP=0x6d9e9427, EFLAGS=0x00010212
+
+Top of Stack: (sp=0x02fefba8)
+0x02fefba8:   2318b528 6d9e982a 00000003 6da5f671
+0x02fefbb8:   6dae056c 6dac5074 00304e38 6da21cfb
+0x02fefbc8:   6dac5074 00000000 6dac5074 6dac5074
+0x02fefbd8:   00304e38 6d959bf1 00000001 00000002
+0x02fefbe8:   6dac5074 6dac5074 00000001 00304e38
+0x02fefbf8:   22ec0000 00ec8000 6d95b82b 00000001
+0x02fefc08:   00000000 00000001 00000002 6dac5074
+0x02fefc18:   6dac5074 00010100 00000832 00000000 
+
+Instructions: (pc=0x6d9e9427)
+0x6d9e9417:   08 8b 08 8b 04 8a 8b 48 04 8b 51 08 83 c1 08 50
+0x6d9e9427:   ff 52 60 a1 98 04 ad 6d 83 38 00 75 dc c3 cc cc 
+
+
+Stack: [0x02fa0000,0x02ff0000],  sp=0x02fefba8,  free space=318k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x139427]
+
+VM_Operation (0x00d6f270): GenCollectForAllocation, mode: safepoint, requested by thread 0x00308c00
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x02f14400 JavaThread "Low Memory Detector" daemon [_thread_blocked, id=3068, stack(0x04040000,0x04440000)]
+  0x02f0dc00 JavaThread "CompilerThread0" daemon [_thread_blocked, id=1544, stack(0x03ff0000,0x04040000)]
+  0x02f09000 JavaThread "Attach Listener" daemon [_thread_blocked, id=4456, stack(0x03bf0000,0x03ff0000)]
+  0x02f13400 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=5848, stack(0x037f0000,0x03bf0000)]
+  0x02ec6000 JavaThread "Finalizer" daemon [_thread_blocked, id=5040, stack(0x033f0000,0x037f0000)]
+  0x02ec1400 JavaThread "Reference Handler" daemon [_thread_blocked, id=4672, stack(0x02ff0000,0x033f0000)]
+  0x00308c00 JavaThread "main" [_thread_blocked, id=4596, stack(0x00970000,0x00d70000)]
+
+Other Threads:
+=>0x02ebfc00 VMThread [stack: 0x02fa0000,0x02ff0000] [id=5484]
+  0x02f15800 WatcherThread [stack: 0x04440000,0x04490000] [id=3764]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00307bd8] UNKNOWN - owner thread: 0x02ebfc00
+[0x00308038] UNKNOWN - owner thread: 0x00308c00
+
+Heap
+ def new generation   total 960K, used 64K [0x229e0000, 0x22ae0000, 0x22ec0000)
+  eden space 896K,   0% used [0x229e0000, 0x229e0000, 0x22ac0000)
+  from space 64K, 100% used [0x22ac0000, 0x22ad0000, 0x22ad0000)
+  to   space 64K,   0% used [0x22ad0000, 0x22ad0000, 0x22ae0000)
+ tenured generation   total 7296K, used 7240K [0x22ec0000, 0x235e0000, 0x269e0000)
+   the space 7296K,  99% used [0x22ec0000, 0x235d2378, 0x235d2400, 0x235e0000)
+ compacting perm gen  total 12288K, used 2616K [0x269e0000, 0x275e0000, 0x2a9e0000)
+   the space 12288K,  21% used [0x269e0000, 0x26c6e310, 0x26c6e400, 0x275e0000)
+    ro space 8192K,  67% used [0x2a9e0000, 0x2af47ea8, 0x2af48000, 0x2b1e0000)
+    rw space 12288K,  53% used [0x2b1e0000, 0x2b855530, 0x2b855600, 0x2bde0000)
+
+Dynamic libraries:
+0x00400000 - 0x0040a000 	C:\Program Files\Java\jdk1.6.0_13\bin\javac.exe
+0x7c920000 - 0x7c9b6000 	C:\WINDOWS\system32\ntdll.dll
+0x7c800000 - 0x7c91e000 	C:\WINDOWS\system32\kernel32.dll
+0x6d010000 - 0x6d025000 	C:\Program Files\Java\jdk1.6.0_13\bin\jli.dll
+0x77da0000 - 0x77e49000 	C:\WINDOWS\system32\ADVAPI32.dll
+0x77e50000 - 0x77ee3000 	C:\WINDOWS\system32\RPCRT4.dll
+0x77fc0000 - 0x77fd1000 	C:\WINDOWS\system32\Secur32.dll
+0x7c340000 - 0x7c396000 	C:\Program Files\Java\jdk1.6.0_13\bin\MSVCR71.dll
+0x00310000 - 0x00366000 	C:\Program Files\Java\jdk1.6.0_13\jre\bin\msvcr71.dll
+0x6d8b0000 - 0x6db06000 	C:\Program Files\Java\jdk1.6.0_13\jre\bin\client\jvm.dll
+0x77d10000 - 0x77da0000 	C:\WINDOWS\system32\USER32.dll
+0x77ef0000 - 0x77f39000 	C:\WINDOWS\system32\GDI32.dll
+0x76b10000 - 0x76b3a000 	C:\WINDOWS\system32\WINMM.dll
+0x76300000 - 0x7631d000 	C:\WINDOWS\system32\IMM32.DLL
+0x62c20000 - 0x62c29000 	C:\WINDOWS\system32\LPK.DLL
+0x73fa0000 - 0x7400b000 	C:\WINDOWS\system32\USP10.dll
+0x6d340000 - 0x6d348000 	C:\Program Files\Java\jdk1.6.0_13\jre\bin\hpi.dll
+0x76bc0000 - 0x76bcb000 	C:\WINDOWS\system32\PSAPI.DLL
+0x6d860000 - 0x6d86c000 	C:\Program Files\Java\jdk1.6.0_13\jre\bin\verify.dll
+0x6d3e0000 - 0x6d3ff000 	C:\Program Files\Java\jdk1.6.0_13\jre\bin\java.dll
+0x6d8a0000 - 0x6d8af000 	C:\Program Files\Java\jdk1.6.0_13\jre\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Denv.class.path=.;C:\Program Files\Java\jre6\lib\ext\QTJava.zip -Dapplication.home=C:\Program Files\Java\jdk1.6.0_13 -Xms8m -Xss4m -ea:com.sun.tools... 
+java_command: com.sun.tools.javac.Main -classpath D:\appengine-java-sdk-1.6.6\lib\shared\appengine-local-runtime-shared.jar;D:\appengine-java-sdk-1.6.6\lib\shared\appengine-local-webapis.jar;D:\appengine-java-sdk-1.6.6\lib\shared\el-api.jar;D:\appengine-java-sdk-1.6.6\lib\shared\jsp\repackaged-appengine-ant-1.7.1.jar;D:\appengine-java-sdk-1.6.6\lib\shared\jsp\repackaged-appengine-ant-launcher-1.7.1.jar;D:\appengine-java-sdk-1.6.6\lib\shared\jsp\repackaged-appengine-jasper-6.0.29.jar;D:\appengine-java-sdk-1.6.6\lib\shared\jsp\repackaged-appengine-jasper-el-6.0.29.jar;D:\appengine-java-sdk-1.6.6\lib\shared\jsp\repackaged-appengine-tomcat-juli-6.0.29.jar;D:\appengine-java-sdk-1.6.6\lib\shared\jsp-api.jar;D:\appengine-java-sdk-1.6.6\lib\shared\servlet-api.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\classes;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\appengine-api-1.0-sdk-1.6.6.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\appengine-api-labs-1.6.6.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\appengine-jsr107cache-1.6.6.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\commons-codec.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\commons-logging-1.1.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\datanucleus-appengine-1.0.10.final.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\datanucleus-core-1.1.5.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\datanucleus-jpa-1.1.5.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\geronimo-jpa_3.0_spec-1.1.1.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\geronimo-jta_1.1_spec-1.1.1.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\jackson-all-1.8.5.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\jdo2-api-2.3-eb.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\jsr107cache-1.1.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\repackaged-appengine-ant-1.7.1.jar;R:\temp\appcfg5480896146222695850.tmp\WEB-INF\lib\repackaged-appengine-ant-launcher-1.7.1.
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+CLASSPATH=.;C:\Program Files\Java\jre6\lib\ext\QTJava.zip
+PATH=C:\Program Files\Java\jdk1.6.0_13\bin;C:\Program Files\AMD APP\bin\x86;c:\Documents and Settings\Administrator\My Documents\AMD APP\bin\x86;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Program Files\Common Files\Thunder Network\KanKan\Codecs;C:\Program Files\ATI Technologies\ATI.ACE\Core-Static;c:\Program Files\AMD APP\Tools\AMD APP KernelAnalyzer 1.8\;C:\Program Files\QuickTime\QTSystem\;C:\Program Files\TortoiseSVN\bin
+USERNAME=Administrator
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 30 Stepping 5, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows XP Build 2600 Service Pack 3
+
+CPU:total 4 (8 cores per cpu, 2 threads per core) family 6 model 14 stepping 5, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, ht
+
+Memory: 4k page, physical 2097151k(2097151k free), swap 4194303k(4040848k free)
+
+vm_info: Java HotSpot(TM) Client VM (11.3-b02) for windows-x86 JRE (1.6.0_13-b03), built on Mar  9 2009 01:15:24 by "java_re" with MS VC++ 7.1
+
+time: Sun Jun 10 22:24:09 2012
+elapsed time: 0 seconds
+

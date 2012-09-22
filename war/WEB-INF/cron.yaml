@@ -1,0 +1,5 @@
+cron:
+- description: weibo refresh
+  url: /cron?m=create_refresh_task
+  schedule: every 30 minutes
+  timezone: Asia/Shanghai
