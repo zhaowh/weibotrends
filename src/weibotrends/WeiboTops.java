@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,7 +103,7 @@ public class WeiboTops  implements java.io.Serializable {
 	}
 
 	//计算并设置转发速度
-    private void calcRtSpeed(Tweet t){
+    private void resetRtSpeed(Tweet t){
 
     	if (t==null || t.getScreenName() == null || t.getCreatedAt() == null) {
     		log.warning("null? : "+t);
@@ -152,43 +153,68 @@ public class WeiboTops  implements java.io.Serializable {
     			t.setRepostsCount(count.getReposts());
     			t.setCommentsCount(count.getComments());
     			
-    			calcRtSpeed(t);
-    			
-    			if (t.getRepostSpeed() >= MIN_RT_SPEED){
+    			//重算转发速度相关数据并设置重算时间
+    			resetRtSpeed(t);
+
+    			//超过最低转发速度并且速度+加速度大于0才缓存
+    			if (t.getRepostSpeed() >= MIN_RT_SPEED && t.getRepostSpeed()+t.getRtAcceleration()>0){
     				reseted.put(t.getId(), t);
     			}else{
     				remove.add(t.getId());
     			}
-    			
     		}
     	}
+    	
     	WeiboCache.putAllTweets(reseted, userConfig.getUserId()); //重新缓存
     	log.fine("reCached: " + reseted.size());
     	
+		long maxRefreshInterval = this.userConfig.getMaxPostedHour()*60*60*1000;
+		int i=0;
+    	for (Tweet t: tweets.values()){
+    		//已过最大计数刷新时间仍未刷新则从缓存移除（原贴可能已删除）
+    		if (!remove.contains(t.getId()) && isCountExpired(t, maxRefreshInterval)){  
+    			remove.add(t.getId());
+    			i++;
+    		}    	
+    	}
+		log.fine("tweets missed: " + i);
+    	
     	WeiboCache.delTweets(remove, userConfig.getUserId()); //移除转发速度下降的
     	log.fine("delCached: " + remove.size());
-
+    	
     }
     
-    //重设所有转发数据
+    private boolean isCountExpired(Tweet t, long countInterval){
+		if (t.getRtAcceleration()!=null  && t.getRtAcceleration().intValue()!=0 //转发加速度已计算
+				&& t.getCountTime().getTime() + countInterval > System.currentTimeMillis() //未到计数超时时间
+			){  
+			return false; 
+		}
+    	
+    	return true;
+    }
+    
+    //重设转发数据
     private List<Future<HTTPResponse>> preRecountTweets(Map<Long, Tweet> tweets) throws WeiboException{
     	Set<Long> ids = new HashSet<Long>(tweets.size());
     	for (Tweet t : tweets.values()){
 			//已计数且低于最低转发速度的，计数缓存时间为发帖时距/5；高于最低转发速度的，计数缓存时间为发帖时距/10
-			long minCountTime = 0;
+			long minCountInterval = 0;
 			if (t.getRepostSpeed() < this.userConfig.getMinRtSpeed() ){
-				minCountTime = (System.currentTimeMillis() - t.getCreatedAt().getTime())/5 ;
+				minCountInterval = (System.currentTimeMillis() - t.getCreatedAt().getTime())/5 ;
 			}else{
-				minCountTime = (System.currentTimeMillis() - t.getCreatedAt().getTime())/10 ;
+				minCountInterval = (System.currentTimeMillis() - t.getCreatedAt().getTime())/10 ;
 			}
-			if (minCountTime>30*60*1000){ //最长刷新间隔30分钟
-				minCountTime = 30*60*1000;
+			//最长发帖时间2小时时，最长刷新间隔30分钟
+			long maxRefreshInterval = this.userConfig.getMaxPostedHour() * 60*60*1000 /4;
+			if (minCountInterval > maxRefreshInterval){ 
+				minCountInterval = maxRefreshInterval;
 			}
-			if (t.getRtAcceleration()!=null  && t.getRtAcceleration().intValue()!=0 //转发加速度已计算
-					&& t.getCountTime().getTime() + minCountTime > System.currentTimeMillis() //未到计数缓存超时时间
-				){  
+			//未到计数刷新超时时间则跳过
+			if (!isCountExpired(t, minCountInterval)){  
 				continue; 
 			}
+			//log.fine("minCountInterval:" + minCountInterval + " maxRefreshInterval:" + maxRefreshInterval);
 			
     		ids.add(t.getId());
     	}
@@ -239,7 +265,7 @@ public class WeiboTops  implements java.io.Serializable {
 			} else if (lastTweet.getId() < t.getId()) {
 				lastTweet = t;
 			}
-			calcRtSpeed(t);
+			resetRtSpeed(t);
 
 			
 			// 较热门才缓存
@@ -253,7 +279,7 @@ public class WeiboTops  implements java.io.Serializable {
 					&& t.getPrimaryTweet().getCreatedAt() != null
 					&& t.getPrimaryTweet().getScreenName() != null) { // 转发的原文,且未被删除
 				
-				calcRtSpeed(t.getPrimaryTweet());
+				resetRtSpeed(t.getPrimaryTweet());
 				
 				// 较热门才缓存
 				if (t.getPrimaryTweet().getRepostSpeed() >= MIN_RT_SPEED && t.getPrimaryTweet().getRepostsCount() >= MIN_RT_COUNT) {
