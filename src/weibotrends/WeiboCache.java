@@ -153,6 +153,9 @@ public class WeiboCache {
 			keys.add(getTweetKey(id));
 		}
 		delTweetKeys(keys, type);
+		if (!"tops".equals(type)){
+			delTweetKeys(keys, "top"); //同时从tops中删除
+		}
 		deleteAll(keys);
 	}
 	
@@ -162,10 +165,7 @@ public class WeiboCache {
 	}
 	*/
 	
-	public static void putTopTweets(Map<Long,Tweet> tweets){
-		putAllTweets(tweets, "tops");
-	}
-		
+
 
 	public static Map<Long,Tweet> getAllTweets(String type){
 		Map<Long,Tweet> tweets = new HashMap<Long,Tweet> ();
@@ -192,6 +192,10 @@ public class WeiboCache {
 	}
 	*/
 	
+	public static void putTopTweets(Map<Long,Tweet> tweets){
+		putAllTweets(tweets, "tops");
+	}
+			
 	public static Map<Long,Tweet> getTopTweets(){
 		return getAllTweets("tops");
 	}	

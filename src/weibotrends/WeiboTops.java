@@ -104,37 +104,36 @@ public class WeiboTops  implements java.io.Serializable {
 
 	//计算并设置转发速度
     private void resetRtSpeed(Tweet t){
+    	Date now = new Date(System.currentTimeMillis());
 
     	if (t==null || t.getScreenName() == null || t.getCreatedAt() == null) {
     		log.warning("null? : "+t);
     		return;
     	}
-    	Date now = new Date(System.currentTimeMillis());
-   		//转发速度
-   		double rtSpeed = calcRtSpeed(t.getRepostsCount(), t.getCommentsCount(), t.getCreatedAt(), t.getFollowersCount());
-   		double rtSpeedNow = rtSpeed;
-   		if (t.getLastCountTime() !=null && t.getLastRepostsCount()!=0 && t.getLastCommentsCount()!=0){
-   			rtSpeedNow = calcRtSpeed(t.getRepostsCount()-t.getLastRepostsCount(), t.getCommentsCount()-t.getLastCommentsCount(), t.getLastCountTime(), t.getFollowersCount());
-   		}
-
     	double lastRtSpeed = t.getRepostSpeed();
     	Date lastCountTime = t.getCountTime();
+   		//转发速度
+   		double rtSpeed = calcRtSpeed(t.getRepostsCount(), t.getCommentsCount(), t.getCreatedAt(), t.getFollowersCount());
    		t.setRepostSpeed(rtSpeed);
    		t.setCountTime(now);
    		
    		if (lastCountTime!=null && now.after(lastCountTime)){
-   			//转发加速度
    			double durHours = (now.getTime() - lastCountTime.getTime())/1000.0/60/60;
-   			double acceleration =  ((rtSpeedNow - lastRtSpeed)/durHours);
+   	   		//如计数刷新间隔超20分钟，则以刷新间隔内新增转发数计算转发速度
+   			if ( t.getLastRepostsCount()!=0 && t.getLastCommentsCount()!=0 && durHours>0.33){
+   				rtSpeed = calcRtSpeed(t.getRepostsCount()-t.getLastRepostsCount(), t.getCommentsCount()-t.getLastCommentsCount(), t.getLastCountTime(), t.getFollowersCount());
+   				t.setRepostSpeed(rtSpeed);
+   			}
+   			//转发加速度
+   			double acceleration =  ((rtSpeed - lastRtSpeed)/durHours);
    			t.setRtAcceleration(acceleration);
    		}
 		
-   		if (t.getRtAcceleration()!=null && t.getRtAcceleration()!=0){
-   			//log.finest("speed:" + rtSpeed + " lastSpeed:" + lastRtSpeed + " acceleration: " + t.getRtAcceleration());
-   		}
+ 		//log.finest(t.getScreenName() + " repost:" + t.getRepostsCount() + " comments:" + t.getCommentsCount() + " acceleration: " + t.getRtAcceleration());
+		//log.finest("speed:" + rtSpeed + " lastSpeed:" + lastRtSpeed + " acceleration: " + t.getRtAcceleration());
    		
    		long expire = t.getCreatedAt().getTime()+this.userConfig.getMaxPostedHour() * 60 * 60 * 1000;
-   		if (rtSpeed < this.userConfig.getMinRtSpeed()){
+   		if (t.getRepostSpeed() < this.userConfig.getMinRtSpeed()){
    			t.setExpireTime(new Date(expire));
    		}else{
    			t.setExpireTime(null);//never expire
@@ -145,6 +144,8 @@ public class WeiboTops  implements java.io.Serializable {
 
     //重设转发数据
     private void resetCounts(Map<Long, Tweet> tweets, List<Count> counts) throws WeiboException{
+    	Date now = new Date(System.currentTimeMillis());
+    	
     	Map<Long, Tweet> reseted = new HashMap<Long, Tweet>(counts.size());
     	Set<Long> remove = new HashSet<Long>();
     	for (Count count : counts){
@@ -156,8 +157,8 @@ public class WeiboTops  implements java.io.Serializable {
     			//重算转发速度相关数据并设置重算时间
     			resetRtSpeed(t);
 
-    			//超过最低转发速度并且速度+加速度大于0才缓存
-    			if (t.getRepostSpeed() >= MIN_RT_SPEED && t.getRepostSpeed()+t.getRtAcceleration()>0){
+    			//超过最低转发速度
+    			if (t.getRepostSpeed() >= MIN_RT_SPEED ){
     				reseted.put(t.getId(), t);
     			}else{
     				remove.add(t.getId());
@@ -171,10 +172,13 @@ public class WeiboTops  implements java.io.Serializable {
 		long maxRefreshInterval = this.userConfig.getMaxPostedHour()*60*60*1000;
 		int i=0;
     	for (Tweet t: tweets.values()){
-    		//已过最大计数刷新时间仍未刷新则从缓存移除（原贴可能已删除）
-    		if (!remove.contains(t.getId()) && isCountExpired(t, maxRefreshInterval)){  
-    			remove.add(t.getId());
-    			i++;
+    		if (!remove.contains(t.getId()) ){
+    			if (isCountExpired(t, maxRefreshInterval)//已过最大计数刷新时间仍未刷新则从缓存移除（原贴可能已删除）
+    					||(t.getExpireTime()!=null && t.getExpireTime().before(now)) //已过缓存超时时间
+    				){
+    				remove.add(t.getId());
+    				i++;
+    			}
     		}    	
     	}
 		log.fine("tweets missed: " + i);
@@ -185,13 +189,12 @@ public class WeiboTops  implements java.io.Serializable {
     }
     
     private boolean isCountExpired(Tweet t, long countInterval){
-		if (t.getRtAcceleration()!=null  && t.getRtAcceleration().intValue()!=0 //转发加速度已计算
-				&& t.getCountTime().getTime() + countInterval > System.currentTimeMillis() //未到计数超时时间
+		if (t.getCountTime()!=null && t.getCountTime().getTime() + countInterval < System.currentTimeMillis() //已到计数超时时间
 			){  
-			return false; 
+			return true; 
 		}
     	
-    	return true;
+    	return false;
     }
     
     //重设转发数据
