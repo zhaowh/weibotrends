@@ -1,7 +1,12 @@
 package weibotrends;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Logger;
 
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -10,10 +15,10 @@ import com.google.appengine.api.datastore.Text;
 
 @PersistenceCapable
 public class UserConfig  implements java.io.Serializable {
-
-
 	private static final long serialVersionUID = -2957940235844909461L;
 
+	private static Logger log = Logger.getLogger(UserConfig.class.getName());
+	
 	@PrimaryKey
 	@Persistent 
 	private String userId;
@@ -63,12 +68,15 @@ public class UserConfig  implements java.io.Serializable {
 	@Persistent 
 	private Date lastRtTime = new Date(System.currentTimeMillis());
 	
+	@Persistent 
+	private TreeSet<Long> repostedIds = new TreeSet<Long>();
 	
 	public UserConfig(){
-		
+
 	}
 	
 	public UserConfig(String uid, String accessToken){
+		this();
 		this.userId = uid;
 		this.accessToken = accessToken;
 	}
@@ -175,6 +183,33 @@ public class UserConfig  implements java.io.Serializable {
 		this.lastRtTime = lastRtTime;
 	}
 
-	
+	public void addRepostedId(Long id) {
+		if (repostedIds == null){
+			repostedIds = new TreeSet<Long>();
+		}
+		if (this.repostedIds.size()>100){//最多保存100个
+			this.repostedIds.pollFirst();
+		}
+		this.repostedIds.add(id);
+	}
+
+	public Set<Long> getRepostedIds() {
+		if (repostedIds!=null){
+			return repostedIds.descendingSet();
+		}else{
+			return Collections.emptySet();
+		}
+	}
+
+	public long getLastRepostedId(){
+		long id = 0;
+		if (repostedIds!=null && !this.repostedIds.isEmpty()){
+			id = this.repostedIds.last();
+		}
+		if (id<0) id=0; //?
+		log.fine("since_id="+id);
+		return id;
+
+	}
 	
 }

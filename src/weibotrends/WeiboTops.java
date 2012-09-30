@@ -2,10 +2,7 @@ package weibotrends;
 
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +38,6 @@ public class WeiboTops  implements java.io.Serializable {
 	private User user;
 	private UserConfig userConfig; 
 	
-	private List<Future<HTTPResponse>>  loadRepostsTask = new ArrayList<Future<HTTPResponse>>();
 
 	public WeiboTops(String authCode)  throws WeiboException{
 		this.weibo = new Weibo();
@@ -173,7 +169,7 @@ public class WeiboTops  implements java.io.Serializable {
 		int i=0;
     	for (Tweet t: tweets.values()){
     		if (!remove.contains(t.getId()) ){
-    			if (isCountExpired(t, maxRefreshInterval)//已过最大计数刷新时间仍未刷新则从缓存移除（原贴可能已删除）
+    			if (isCountExpired(t, maxRefreshInterval)//已过最大计数刷新时间仍未刷新（原贴可能已删除）
     					||(t.getExpireTime()!=null && t.getExpireTime().before(now)) //已过缓存超时时间
     				){
     				remove.add(t.getId());
@@ -229,27 +225,29 @@ public class WeiboTops  implements java.io.Serializable {
     private void recountTweets(Map<Long, Tweet> tweets, List<Future<HTTPResponse>> respList) throws WeiboException{
     	List<Count> counts = weibo.getCounts(respList);
     	resetCounts(tweets, counts);
-    	log.fine("recount: " + counts.size());
+    	log.fine("recounted: " + counts.size());
     }
     
     //加载缓存微博
     private Map<Long, Tweet> loadCachedTweets() throws WeiboException{
     	Map<Long, Tweet> cachedTweets = WeiboCache.getAllTweets(userConfig.getUserId());
-    	
+    	//同时加载热门微博（可能由其他用户搜索提供）
+    	Map<Long, Tweet> topTweets = WeiboCache.getTopTweets();
+    	cachedTweets.putAll(topTweets);
     	log.fine("load cached: " + cachedTweets.size()); 
 
     	return cachedTweets;
     }
 
 
-	public  List<Future<HTTPResponse>> preLoadNewTweets(long sinceId) throws WeiboException{
+	private  List<Future<HTTPResponse>> preLoadNewTweets(long sinceId) throws WeiboException{
 		//同时搜索5页
 		log.fine("load new from: " + sinceId);
 		return weibo.preFriendsTimeline(0, 0, sinceId);
 	}
 	
     //加载新微博并缓存
-	public  Map<Long, Tweet> loadNewTweets( List<Future<HTTPResponse>> tasks) throws WeiboException{
+	private  Map<Long, Tweet> loadNewTweets( List<Future<HTTPResponse>> tasks) throws WeiboException{
 		Map<Long, Tweet> newTweets = new HashMap<Long, Tweet>();
 
 		Tweet lastTweet = null;
@@ -257,9 +255,12 @@ public class WeiboTops  implements java.io.Serializable {
 		List<Status> statuses = weibo.getFriendsTimeline(tasks);
 
 		for (Status status : statuses) {
-			if (status.getCreatedAt() == null || status.getUser() == null
-					|| status.getUser().getScreenName() == null)
-				continue; // 被删除贴无创建时间
+			if (status.getCreatedAt() == null // 被删除贴无创建时间 
+					|| status.getUser() == null
+					|| status.getUser().getId() == null 
+					|| status.getUser().getId().equals(this.userConfig.getUserId()) //过滤本人贴
+				)
+				continue; 
 
 			Tweet t = new Tweet(status);
 
@@ -277,7 +278,6 @@ public class WeiboTops  implements java.io.Serializable {
 			}
 			
 
-			// 缓存最新微博作为再次抓取时的since_id
 			if (t.getPrimaryTweet() != null
 					&& t.getPrimaryTweet().getCreatedAt() != null
 					&& t.getPrimaryTweet().getScreenName() != null) { // 转发的原文,且未被删除
@@ -292,6 +292,7 @@ public class WeiboTops  implements java.io.Serializable {
 				
 			}
 		}
+		// 缓存最新微博作为再次抓取时的since_id
 		if (lastTweet != null) {
 			newTweets.put(lastTweet.getId(), lastTweet);
 		}
@@ -302,6 +303,28 @@ public class WeiboTops  implements java.io.Serializable {
 		return newTweets;
 	}	
 	
+	private  Future<HTTPResponse> preRepostsByMe() throws WeiboException{
+		long sinceId = this.userConfig.getLastRepostedId();
+		return weibo.preRepostsByMe(sinceId);
+	}
+	
+    //加载已转发微博ID
+	private  Set<Long> loadRepostsByMe( Future<HTTPResponse> task) throws WeiboException{
+		List<Status> list = weibo.getRepostsByMe(task);
+		if (list!=null && !list.isEmpty()){
+			for (Status s : list){
+				this.userConfig.addRepostedId(Long.parseLong(s.getId()));
+				if (s.getRetweetedStatus()!=null){
+					this.userConfig.addRepostedId(Long.parseLong(s.getRetweetedStatus().getId()));
+				}
+			}
+			saveUserConfig(this.userConfig);
+			log.fine("loaded reposted: " + list.size());
+		}
+		return this.userConfig.getRepostedIds();
+	}
+	
+	
 	private  static long getMaxId(Map<Long, Tweet> tweets){
 		long maxId = 0;
 		for (long id : tweets.keySet()){
@@ -309,6 +332,8 @@ public class WeiboTops  implements java.io.Serializable {
 		}
 		return maxId;
 	}
+
+    	
 	
 	//加载所有微博
 	private Map<Long, Tweet> loadAllTweets() throws WeiboException{
@@ -317,14 +342,28 @@ public class WeiboTops  implements java.io.Serializable {
 		
 		//并发
 		List<Future<HTTPResponse>> newTasks = preLoadNewTweets(sinceId); 
+		Future<HTTPResponse> myRepostsTasks = preRepostsByMe();
 		List<Future<HTTPResponse>> recountTasks = preRecountTweets(cachedTweets);
-    			
+
+		//刷新缓存微博计数及速度
 		recountTweets(cachedTweets, recountTasks);
+		//加载已转发微博ID
+		Set<Long> repostedIds =  loadRepostsByMe(myRepostsTasks);
+		//加载新微博
 		Map<Long, Tweet> newTweets = loadNewTweets(newTasks);
 		
 		Map<Long, Tweet> all = new HashMap<Long, Tweet>(cachedTweets.size() + newTweets.size());
 		all.putAll(cachedTweets);
 		all.putAll(newTweets);
+		
+		//标记已转发微博
+		if (repostedIds!=null)
+		for (long id : repostedIds){
+			Tweet t = all.get(id);
+			if (t!=null){
+				t.setRetweeted(true);
+			}
+		}
 		
 		log.fine("all: " + all.size());
 		return all;
@@ -332,7 +371,7 @@ public class WeiboTops  implements java.io.Serializable {
 	    
 
 	// 搜索热门转发微博
-	public Map<Long, Tweet> searchTopTweets(Map<Long, Tweet> all) {
+	private Map<Long, Tweet> searchTopTweets(Map<Long, Tweet> all) {
 		TreeMap<Long, Tweet> tops = new TreeMap<Long, Tweet>();
 		WeiboFilter filter = new WeiboFilter(this.userConfig.getExcludedWords());
 
@@ -355,29 +394,29 @@ public class WeiboTops  implements java.io.Serializable {
 		// dao.storeTweets(tops.values());
 		return tops.descendingMap();
 	}
-    
-    //搜索热门转发微博
+  
+	/**
+	 * 搜索热门转发微博 
+	 */
     public Map<Long, Tweet> searchTopTweets() throws WeiboException{
     	Map<Long, Tweet> all =  loadAllTweets();
     	return searchTopTweets(all);
-    }    
-    
-    public  Collection<Tweet> loadTopTweets() {
-    	return loadTopTweets("byTime");
     }
     
-    //加载缓存的热门微博
-    public Collection<Tweet> loadTopTweets(String orderType) {
-    	Map<Long, Tweet> tweets = WeiboCache.getTopTweets();
-    	//Map<Long, Tweet> tweets = dao.fetchTweets();
-    	tweets = searchTopTweets(tweets);
+    
+    
+
+    //排序
+    private  Collection<Tweet> sortTweets(Map<Long, Tweet> tweets, String orderType) {
     	if ("bySpeed".equals(orderType)){
     		TreeMap<Double, Tweet> tweets2 = new TreeMap<Double, Tweet>();
     		for (Tweet t : tweets.values()){
     			double speed = t.getRepostSpeed();
+    			/*
     			if (t.getRtAcceleration()!=null){
     				speed = speed + t.getRtAcceleration();
     			}
+    			*/
     			tweets2.put(speed, t);
     		}
     		return tweets2.descendingMap().values();
@@ -393,25 +432,99 @@ public class WeiboTops  implements java.io.Serializable {
     	}
     }
     
-
-	public static String formatTime(Date date){
-		Calendar today = Calendar.getInstance(Locale.SIMPLIFIED_CHINESE);
-		today.setTimeInMillis(System.currentTimeMillis());
-		today.set(Calendar.HOUR,0);
-		today.set(Calendar.MINUTE, 0);
-		today.set(Calendar.MINUTE, 0);
-		String pattern = "yyyy-MM-dd kk:mm";
-		if (date.after(today.getTime())){
-			 pattern = "kk:mm";
+    private boolean repostFirst(Collection<Tweet> tweets)throws WeiboException{
+    	if (tweets==null || tweets.isEmpty()) return false;
+    	
+    	//TODO String rtStr = this.userConfig.getRepostTmpl();
+    	
+    	Tweet t = tweets.iterator().next();
+		if (!t.isRetweeted() 
+				&& (t.getPrimaryTweet()==null || !t.getPrimaryTweet().isRetweeted())) 
+		{
+			Status s = this.weibo
+					.repost(String.valueOf(t.getId()), null, 0);
+			
+			if (s!=null && s.getId() != null) {
+				t.setRetweeted(true); //更新已转发状态
+				WeiboCache.putTweet(t);
+				this.userConfig.addRepostedId(t.getId());//更新已转发列表
+				if (t.getPrimaryTweet()!=null){
+					t.getPrimaryTweet().setRetweeted(true);
+					WeiboCache.putTweet(t.getPrimaryTweet());
+					this.userConfig.addRepostedId(t.getPrimaryTweet().getId());
+				}
+				saveUserConfig(this.userConfig);
+				
+				return true;
+			}
 		}
-		SimpleDateFormat df = new SimpleDateFormat(pattern, Locale.SIMPLIFIED_CHINESE);
-		return df.format(date);
-	}
-	
+		
+		return false;
+    }
+    
+    /**
+     * 转发第一条微博（速度第一或加速度第一或最新热门）
+     * @param tops
+     * @return
+     * @throws WeiboException
+     */
+    private boolean repostTopTweet(Map<Long, Tweet> tops ) throws WeiboException{
+		boolean reposted = false;
+		if (tops.isEmpty())
+			return false;
+
+		if (this.userConfig.isDisabled())
+			return false;
+		
+		if (!reposted) {
+			// 转发速度第一
+			reposted = repostFirst(sortTweets(tops, "bySpeed"));
+		}
+		if (!reposted) {
+			// 转发加速度第一
+			reposted = repostFirst(sortTweets(tops, "byAcc"));
+		}
+		if (!reposted) {
+			// 转发最新
+			reposted = repostFirst(tops.values());
+		}
+		return reposted;
+    }
+    
+    /**
+     * 搜索并转发最热门微博
+     * @return 转发是否成功
+     * @throws WeiboException
+     */
+    public boolean repostTopTweet() throws WeiboException{
+		Map<Long, Tweet> tops = searchTopTweets();
+		return repostTopTweet(tops);
+    }
+    
+    /**
+     * 加载缓存的热门微博,按指定方式排序
+     * @param orderType 排序方式：bySpeed:按速度；byAcc按加速度；默认按时间倒序
+     * @return
+     */
+    
+    public Collection<Tweet> loadTopTweets(String orderType) {
+    	Map<Long, Tweet> tweets = WeiboCache.getTopTweets();
+    	tweets = searchTopTweets(tweets);
+    	return sortTweets(tweets, orderType);
+    }
+    
+    /**
+     * 加载缓存的热门微博,按时间倒序排序
+     */
+    public  Collection<Tweet> loadTopTweets() {
+    	return loadTopTweets("byTime");
+    }
+    
+
     public static void main(String[] args){
     	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.SIMPLIFIED_CHINESE);
     	System.out.println(df.format(new Date()));
-    	System.out.println(formatTime(new Date()));
+    	System.out.println(WeiboUtils.formatTime(new Date()));
     }
 
 }

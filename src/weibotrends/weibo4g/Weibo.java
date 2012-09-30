@@ -185,5 +185,67 @@ public class Weibo implements java.io.Serializable {
 			}
 		}
 		return list;
-	}    
+	}   
+	
+	/**
+	 * 获取某个用户最新发表的微博列表ID
+	 * 
+	 * @return user_timeline IDS
+	 * @throws WeiboException
+	 *             when Weibo service or network is unavailable
+	 * @version weibo4j-V2 1.0.1
+	 * @see <a
+	 *      href="http://open.weibo.com/wiki/2/statuses/user_timeline">statuses/user_timeline</a>
+	 * @since JDK 1.5
+	 */
+	public Future<HTTPResponse> preRepostsByMe(long sinceId) throws WeiboException{
+		Future<HTTPResponse> response = client.getAsync(
+				WeiboConfig.getValue("baseURL")+"statuses/repost_by_me.json",
+				new PostParameter[] {
+					new PostParameter("since_id", String.valueOf(sinceId))
+				}				
+			);
+		return response;
+	}	
+	
+	public List<Status> getRepostsByMe(Future<HTTPResponse>  future) throws WeiboException{
+		List<Status> list = new ArrayList<Status>();
+		StatusWapper w = Status.constructWapperStatus(this.client.getResponse(future));
+		log.finest("get: " + w.getStatuses().size());
+		list.addAll(w.getStatuses());
+		return list;
+	}
+	
+	
+	
+
+	/**
+	 * 转发一条微博
+	 * 
+	 * @param id
+	 *            要转发的微博ID
+	 * @param status
+	 *            添加的转发文本，必须做URLencode，内容不超过140个汉字，不填则默认为“转发微博”
+	 * @param is_comment
+	 *            是否在转发的同时发表评论，0：否、1：评论给当前微博、2：评论给原微博、3：都评论，默认为0
+	 * @return Status
+	 * @throws WeiboException
+	 *             when Weibo service or network is unavailable
+	 * @version weibo4j-V2 1.0.0
+	 * @see <a
+	 *      href="http://open.weibo.com/wiki/2/statuses/repost">statuses/repost</a>
+	 * @since JDK 1.5
+	 */
+	public Status repost(String id, String status, Integer is_comment)
+			throws WeiboException {
+		return new Status(client.post(WeiboConfig.getValue("baseURL") + "statuses/repost.json", 
+				new PostParameter[] {
+					new PostParameter("id", id),
+					new PostParameter("status", status),
+					new PostParameter("is_comment", is_comment.toString()) 
+				},
+				true
+			));
+	}
+	
 }

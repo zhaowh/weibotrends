@@ -58,6 +58,11 @@ public class PostParameter implements java.io.Serializable{
         this.value = String.valueOf(value);
     }
 
+    public PostParameter(String name, long value) {
+        this.name = name;
+        this.value = String.valueOf(value);
+    }
+    
     public PostParameter(String name, File file) {
         this.name = name;
         this.file = file;
@@ -223,8 +228,10 @@ public class PostParameter implements java.io.Serializable{
                 buf.append("&");
             }
             try {
-                buf.append(URLEncoder.encode(httpParams[j].name, "UTF-8"))
-                        .append("=").append(URLEncoder.encode(httpParams[j].value, "UTF-8"));
+            	if (httpParams[j].name!=null && httpParams[j].value!=null){
+                    buf.append(URLEncoder.encode(httpParams[j].name, "UTF-8"))
+                    .append("=").append(URLEncoder.encode(httpParams[j].value, "UTF-8"));
+            	}
             } catch (java.io.UnsupportedEncodingException neverHappen) {
             }
         }

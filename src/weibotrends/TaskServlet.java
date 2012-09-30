@@ -47,7 +47,8 @@ public class TaskServlet extends HttpServlet {
 		String uid = req.getParameter("uid");
 		String token = req.getParameter("token");
 		WeiboTops wt = new WeiboTops(uid, token);
-		wt.searchTopTweets();
+		//wt.searchTopTweets();
+		wt.repostTopTweet();
 	}
 	
 

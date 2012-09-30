@@ -1,5 +1,10 @@
 package weibotrends;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class WeiboUtils {
 	private static final String STR62_KEYS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
@@ -88,6 +93,21 @@ public class WeiboUtils {
 	    }
 	    return mid;
 	};	
+	
+	public static String formatTime(Date date){
+		Calendar today = Calendar.getInstance(Locale.SIMPLIFIED_CHINESE);
+		today.setTimeInMillis(System.currentTimeMillis());
+		today.set(Calendar.HOUR,0);
+		today.set(Calendar.MINUTE, 0);
+		today.set(Calendar.MINUTE, 0);
+		String pattern = "yyyy-MM-dd kk:mm";
+		if (date.after(today.getTime())){
+			 pattern = "kk:mm";
+		}
+		SimpleDateFormat df = new SimpleDateFormat(pattern, Locale.SIMPLIFIED_CHINESE);
+		return df.format(date);
+	}
+		
 	
 	public static void main(String args[]){
 		String s62 = "ypIxt0DsG";

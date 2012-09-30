@@ -87,8 +87,29 @@ for (Tweet t : tweets){
 	<div class="feed-content"> 
 		<p class="feed-main"> 
 <a href="http://weibo.com/<%=t.getUserId()%>" target="_blank" title="<%=t.getScreenName()%>">
-	<%=t.getScreenName()%> <%=formatVerfied(t.isVerified()) %>
+	<%=t.getScreenName()%><%=formatVerfied(t.isVerified()) %>
 </a>：<%=formatText(t.getText())%>
+<%
+	if (t.getRetweet()!=null){
+		Iterator<Tweet> itr = t.getRetweets().iterator();
+		int i = 0;
+%><div class="blur-txt"> 由
+<%
+ 	while( i<3 && itr.hasNext()){
+ 		Tweet rt = itr.next();
+%>
+	<a href="http://weibo.com/<%=rt.getUserId()%>" target="_blank" title="<%=rt.getScreenName()%>">
+		<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
+	</a>
+<%
+	i++;
+	}
+	if (i>=3 && itr.hasNext()) out.print("等");
+%>转推
+	</div>
+<%
+	}
+ %>
 		</p> 
 <%
 	if (t.getPrimaryTweet()!=null){
@@ -126,7 +147,8 @@ for (Tweet t : tweets){
 <%
 	}
 %>
-		
+
+
 		<div class="feed-info"><p>
 <%
 	if (t.isRetweeted()){

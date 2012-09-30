@@ -128,10 +128,10 @@ public class Tweet  implements java.io.Serializable {
 	private boolean isRetweeted;		//是否以被当前用户转发
 	
 	
-	@NotPersistent
+	@Persistent
 	private Tweet primaryTweet;			//转发的原始tweet
 	
-	@NotPersistent
+	@Persistent
     private Set<Tweet> retweets = new HashSet<Tweet> ();
 	
 	
@@ -203,6 +203,17 @@ public class Tweet  implements java.io.Serializable {
 		this.retweets.add(retweet);
 	}
 
+	public Set getRetweets(){
+		return this.retweets;
+	}
+	
+	public Tweet getRetweet(){
+		if (!this.retweets.isEmpty()){
+			return retweets.iterator().next();
+		}else{
+			return null;
+		}
+	}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -500,6 +511,9 @@ public class Tweet  implements java.io.Serializable {
 
 	public void setRetweeted(boolean isRetweeted) {
 		this.isRetweeted = isRetweeted;
+		if (this.primaryTweet!=null){
+			this.primaryTweet.setRetweeted(isRetweeted);
+		}
 	}
 
 	public String toString(){

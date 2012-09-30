@@ -46,7 +46,6 @@ public class HttpClientAsync implements java.io.Serializable {
 	private static final int BAD_GATEWAY           = 502;// Bad Gateway: Weibo is down or being upgraded.
 	private static final int SERVICE_UNAVAILABLE   = 503;// Service Unavailable: The Weibo servers are up, but overloaded with requests. Try again later. The search and trend methods use this to indicate when you are being rate limited.
 
-	private final static boolean DEBUG = Configuration.getDebug();
 	
 	static Logger log = Logger.getLogger(HttpClientAsync.class.getName());
 	
@@ -69,9 +68,7 @@ public class HttpClientAsync implements java.io.Serializable {
 	 * 
 	 */
 	private static void log(String message) {
-		if (DEBUG) {
-			log.log(Level.ALL,message);
-		}
+		log.log(Level.ALL,message);
 	}
 
 	/**
@@ -91,8 +88,6 @@ public class HttpClientAsync implements java.io.Serializable {
 	
 	public Future<HTTPResponse>  getAsync(String url, PostParameter[] params)
 			throws WeiboException {
-		log("Request:");
-		log("GET:" + url);
 		if (null != params && params.length > 0) {
 			String encodedParams = PostParameter.encodeParameters(params);
 			if (-1 == url.indexOf("?")) {
@@ -101,6 +96,7 @@ public class HttpClientAsync implements java.io.Serializable {
 				url += "&" + encodedParams;
 			}
 		}
+		log.fine("GET:" + url);
 		HTTPRequest req;
 		try {
 			req = new HTTPRequest(new URL(url), HTTPMethod.GET, fetchOptions);

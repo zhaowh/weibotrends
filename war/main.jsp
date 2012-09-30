@@ -31,13 +31,16 @@
 					<div class="inner-nav" id="xwbInnerNav"> 
 						<span class="defined-link"> 
 							<a target="_blank" href="http://weibo.com/">新浪微博</a> 
+							| <a target="_blank" href="http://weiba.weibo.com/">微吧</a> 
 							| <a target="_blank" href="http://q.weibo.com/">微群</a> 
 						</span> 
 						<div class="nav-right"> 
+
 							<form class="search-box skin-bg" onsubmit="return false" id="xwb_search_form"> 
 								<input class="search-btn skin-bg" type="submit" value="" id="xwb_trig"/> 
 								<input class="search-input"  type="text" value="搜索微博/找人"  id="xwb_inputor"/> 
-							</form> 
+							</form>
+
 							<span class="user-link"> 
 								<a  href="http://weibo.com/<%=user.getId()%>" target="_blank"><%=user.getName()%></a> 
 								| <a href="/action.php?m=account.logout">退出</a> 
@@ -117,8 +120,8 @@
 				<div class="ft-in"> 
 					<div class="footer-defined"> 
 						<em class="site-name">微博趋势</em> 
-						<a target="_blank" href="http://x.weibo.com/bbs/" target="_blank">意见反馈</a> 
-						| <a target="_blank" href="http://x.weibo.com/help.php" target="_blank">帮助中心</a> 
+						<a target="_blank" href="#" target="_blank">意见反馈</a> 
+						| <a target="_blank" href="#" target="_blank">帮助中心</a>
 					</div> 
 					<img src="https://developers.google.com/appengine/images/appengine-noborder-120x30.gif" 
 					alt="Powered by Google App Engine" />
