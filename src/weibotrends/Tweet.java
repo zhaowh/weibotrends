@@ -1,10 +1,11 @@
 package weibotrends;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -12,8 +13,6 @@ import javax.jdo.annotations.PrimaryKey;
 import weibo4j.model.Source;
 import weibo4j.model.Status;
 import weibo4j.model.User;
-
-import com.google.appengine.api.datastore.KeyFactory;
 
 
 @PersistenceCapable
@@ -125,8 +124,6 @@ public class Tweet  implements java.io.Serializable {
 	@Persistent	
 	private Long primaryTweetId;		//转发的原始tweet的id
 	
-	private boolean isRetweeted;		//是否以被当前用户转发
-	
 	
 	@Persistent
 	private Tweet primaryTweet;			//转发的原始tweet
@@ -134,6 +131,7 @@ public class Tweet  implements java.io.Serializable {
 	@Persistent
     private Set<Tweet> retweets = new HashSet<Tweet> ();
 	
+
 	
 	public Tweet(){
 		
@@ -472,17 +470,7 @@ public class Tweet  implements java.io.Serializable {
 		return (int)(expireTime.getTime() - System.currentTimeMillis());
 	}	
 	
-	public boolean isRetweeted() {
-		return isRetweeted;
-	}
 
-	public void setRetweeted(boolean isRetweeted) {
-		this.isRetweeted = isRetweeted;
-		if (this.primaryTweet!=null){
-			this.primaryTweet.setRetweeted(isRetweeted);
-		}
-	}
-	
 	
 
 	public void setPrimaryTweet(Tweet primaryTweet) {
@@ -523,7 +511,18 @@ public class Tweet  implements java.io.Serializable {
 		}else{
 			return null;
 		}
-	}	
+	}
+	
+	public Map<String, Tweet> getUserRetweets(){
+		Map<String, Tweet> rts = new HashMap<String, Tweet> (this.retweets.size());
+		for (Tweet t: retweets){
+			rts.put(t.getScreenName(), t);
+		}
+		return rts;
+	}
+	
+
+		
 
 	public String toString(){
 		return "Tweet [id=" + id + ", user=" + screenName + ",  createdAt="

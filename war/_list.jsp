@@ -5,10 +5,11 @@
 <%@ page import="java.util.*" %>
 <%@ page import="weibo4j.model.User" %>
 <%@ page import="weibotrends.Tweet" %>
+<%@ page import="weibotrends.WeiboTops" %>
 <%@ page import="weibotrends.WeiboUtils" %>
 <%
 	User user = (User)session.getAttribute("user");
-
+	WeiboTops wt = (WeiboTops)session.getAttribute("weiboTops");
 	Collection<Tweet> tweets = (Collection<Tweet>)request.getAttribute("tweets");
 %>
 <%!
@@ -91,14 +92,15 @@ for (Tweet t : tweets){
 </a>：<%=formatText(t.getText())%>
 <%
 	if (t.getRetweet()!=null){
-		Iterator<Tweet> itr = t.getRetweets().iterator();
+		Map<String, Tweet> rts = t.getUserRetweets();
+		Iterator<Tweet> itr = rts.values().iterator();
 		int i = 0;
 %><div class="blur-txt"> 由
 <%
  	while( i<4 && itr.hasNext()){
  		Tweet rt = itr.next();
 %>
-	<a href="http://weibo.com/<%=rt.getUserId()%>" target="_blank" title="<%=rt.getScreenName()%>">
+	<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank">
 		<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
 	</a>
 <%
@@ -151,7 +153,7 @@ for (Tweet t : tweets){
 
 		<div class="feed-info"><p>
 <%
-	if (t.isRetweeted()){
+	if (wt.isRetweeted(t.getId())){
 %>
 	 已转发(<%=t.getRepostsCount()%>)
 <%
