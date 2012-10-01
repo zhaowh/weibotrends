@@ -100,7 +100,7 @@ textarea{ font-family:Tahoma, Geneva, sans-serif; resize:none;}
 .feed-list{ padding:20px 25px;}
 .feed-list .feed-tit{ padding-bottom:6px;}
 .feed-list .feed-tit h3{ text-indent:6px; font-size:14px;}
-.feed-list .feed-filter{ float:right;}
+.feed-list .feed-filter{ float:right; }
 .feed-list .feed-filter strong{ margin:0 10px;}
 .feed-list .feed-filter a{ margin:0 10px;}
 .feed-list .new-feed{ display:block; margin:0 0 8px; height:29px; line-height:29px; text-align:center; outline:none;}
