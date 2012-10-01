@@ -18,6 +18,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
  
 <link href="/css/base.css" rel="stylesheet" type="text/css" /> 
+<link href="/css/skin_default/skin.css" rel="stylesheet" type="text/css" /> 
 <link href="/css/mobi_friendly.css" rel="stylesheet" type="text/css" />
 
 <!--[if lt IE 9]>

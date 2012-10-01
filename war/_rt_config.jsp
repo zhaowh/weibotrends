@@ -16,11 +16,12 @@
 		<div class="feed-filter"> <a href="weibotops?m=list">微博</a></div> 
 		<h3>参数设置</h3> 
 	</div> 
-
+	<ul id="xwb_weibo_list_ct">
+	<li> 
 	<form method="post" action="/weibotops">
 		<input type=hidden name="m" value="saveConfig"></input>
-		<div style="width:241px; height:30px; float:left; ">&nbsp;</div>
-		<div  style="float:left;text-align:left}">
+		<div class="feed-content"> 
+		  <p class="feed-main"> 
 		<%
 			if ("saveConfig".equals(request.getParameter("m"))){
 				out.println("<font color=blue>配置成功！</font><br><br>\n");
@@ -36,10 +37,10 @@
 			<input type=checkbox name="followed_only" value="true" <% if (conf.isFollowedOnly())  out.print("checked"); %> >仅搜索已关注用户原创或转发的微博 
 			<br><br>
 			<b>屏蔽关键字</b>(以英文逗号分割)：<br>
-			<textarea name="excluded_words" cols=70 rows=14><%=conf.getExcludedWords()%></textarea>
+			<textarea name="excluded_words" cols=54 rows=14><%=conf.getExcludedWords()%></textarea>
 			<br><br>
 			<b>包含关键字</b>(以英文逗号分割，如输入则只有包含以下关键字的微博才能被搜索到)：<br>
-			<textarea name="included_words" cols=70 rows=6><%=conf.getIncludedWords()%></textarea>
+			<textarea name="included_words" cols=54 rows=6><%=conf.getIncludedWords()%></textarea>
 			<br>
 			<input type=checkbox name="followed_first" value="true" <% if (conf.isFollowedFirst()) out.print("checked");  %> >已关注用户原创微博优先（应用屏蔽关键字，不应用包含关键字）
 			<br><br>
@@ -71,13 +72,17 @@
 				<br><br>
 				<b>转发内容</b>：<input type=text name="repost_tmpl" size=45 maxlength="120" value="<%=conf.getRepostTmpl()%>" > </input>
 				<br>
-				<b>评论内容</b>：<input type=text name="reply_tmpl"  size=45 maxlength="120" value="<%=conf.getReplyTmpl()%>"</input><br>
+				<b>评论内容</b>：<input type=text name="reply_tmpl"  size=45 maxlength="120" value="<%=conf.getReplyTmpl()%>"> </input><br>
 				${now}会自动替换为当前时间，${me}替换为<b>@<%=user.getScreenName()%> </b>，${rt}替换为转发内容<br>
 			</div>
 			
-			<br><input type=submit name="save" value=" 保存配置 "> 
+			<br><input type=submit name="save" value=" 保存配置 ">
+		  </p> 
 		</div>
+		</form>
+		</li>
+		</ul>
 		<div style="width:241px; height:30px; float:right; ">&nbsp;</div>
-	</form>
+	</ul>
 </div>
 

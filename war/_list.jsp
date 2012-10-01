@@ -58,8 +58,7 @@
 	}
 
 %>
-<link href="/css/base.css" rel="stylesheet" type="text/css" /> 
-<link href="/css/skin_default/skin.css" rel="stylesheet" type="text/css" /> 
+
 
 <div class="feed-list" id="xwb_weibo_list"> 
 	<div class="feed-tit"> 
