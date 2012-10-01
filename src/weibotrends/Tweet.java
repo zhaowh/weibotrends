@@ -181,39 +181,6 @@ public class Tweet  implements java.io.Serializable {
 		}
 	}
 	
-	public void setPrimaryTweet(Tweet primaryTweet) {
-		if (primaryTweet == null) return;
-		
-		this.primaryTweetId = primaryTweet.getId();
-		this.primaryTweet = primaryTweet;
-		this.primaryTweet.addRetweet(this);
-	}
-
-
-	public Tweet getPrimaryTweet() {
-		return this.primaryTweet;
-	}
-
-	public Long getPrimaryTweetId() {
-		return this.primaryTweetId;
-	}
-
-
-	public void addRetweet(Tweet retweet) {
-		this.retweets.add(retweet);
-	}
-
-	public Set getRetweets(){
-		return this.retweets;
-	}
-	
-	public Tweet getRetweet(){
-		if (!this.retweets.isEmpty()){
-			return retweets.iterator().next();
-		}else{
-			return null;
-		}
-	}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -515,6 +482,48 @@ public class Tweet  implements java.io.Serializable {
 			this.primaryTweet.setRetweeted(isRetweeted);
 		}
 	}
+	
+	
+
+	public void setPrimaryTweet(Tweet primaryTweet) {
+		if (primaryTweet == null) return;
+		
+		this.primaryTweetId = primaryTweet.getId();
+		this.primaryTweet = primaryTweet;
+		this.primaryTweet.addRetweet(this);
+	}
+
+
+	public Tweet getPrimaryTweet() {
+		return this.primaryTweet;
+	}
+
+	public Long getPrimaryTweetId() {
+		return this.primaryTweetId;
+	}
+
+
+	public void addRetweet(Tweet retweet) {
+		this.retweets.remove(retweet);
+		this.retweets.add(retweet);
+	}
+
+	public void addRetweets(Set<Tweet> retweets) {
+		this.retweets.removeAll(retweets);
+		this.retweets.addAll(retweets);
+	}
+	
+	public Set<Tweet> getRetweets(){
+		return this.retweets;
+	}
+	
+	public Tweet getRetweet(){
+		if (!this.retweets.isEmpty()){
+			return retweets.iterator().next();
+		}else{
+			return null;
+		}
+	}	
 
 	public String toString(){
 		return "Tweet [id=" + id + ", user=" + screenName + ",  createdAt="
@@ -529,6 +538,17 @@ public class Tweet  implements java.io.Serializable {
 		+ commentsCount + ", mid=" + mid
 		+ ", retweeted=" + primaryTweet 
 		+  "]";
+	}
+	
+	public boolean equals(Object obj){
+		if (obj == null || !(obj instanceof Tweet)){
+			return false;
+		}
+		Tweet target = (Tweet)obj;
+		if (this.id == target.getId()) {
+			return true;
+		}
+		return false;
 	}
 	
 	

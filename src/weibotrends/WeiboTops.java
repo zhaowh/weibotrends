@@ -282,11 +282,19 @@ public class WeiboTops  implements java.io.Serializable {
 					&& t.getPrimaryTweet().getCreatedAt() != null
 					&& t.getPrimaryTweet().getScreenName() != null) { // 转发的原文,且未被删除
 				
-				resetRtSpeed(t.getPrimaryTweet());
+				Tweet pt = t.getPrimaryTweet();
+				resetRtSpeed(pt);
+				
+				//从缓存获取已记录的转发信息
+				Tweet cached = WeiboCache.getTweet(pt.getId());
+				if (cached!=null){
+					//添加已记录的转发信息
+					pt.addRetweets(cached.getRetweets());
+				}
 				
 				// 较热门才缓存
-				if (t.getPrimaryTweet().getRepostSpeed() >= MIN_RT_SPEED && t.getPrimaryTweet().getRepostsCount() >= MIN_RT_COUNT) {
-					newTweets.put(t.getPrimaryTweet().getId(), t.getPrimaryTweet());
+				if (pt.getRepostSpeed() >= MIN_RT_SPEED && pt.getRepostsCount() >= MIN_RT_COUNT) {
+					newTweets.put(pt.getId(), pt);
 				}
 				
 				

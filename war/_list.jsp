@@ -95,7 +95,7 @@ for (Tweet t : tweets){
 		int i = 0;
 %><div class="blur-txt"> 由
 <%
- 	while( i<3 && itr.hasNext()){
+ 	while( i<4 && itr.hasNext()){
  		Tweet rt = itr.next();
 %>
 	<a href="http://weibo.com/<%=rt.getUserId()%>" target="_blank" title="<%=rt.getScreenName()%>">
@@ -104,7 +104,7 @@ for (Tweet t : tweets){
 <%
 	i++;
 	}
-	if (i>=3 && itr.hasNext()) out.print("等");
+	if (i>=4 && itr.hasNext()) out.print("等");
 %>转推
 	</div>
 <%
