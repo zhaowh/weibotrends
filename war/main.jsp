@@ -12,6 +12,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"> 
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>微博趋势 - 最新热点</title> 
 <link rel="shortcut icon" href="/favicon.ico" /> 
 <link href="/css/base.css" rel="stylesheet" type="text/css" /> 
@@ -120,8 +121,8 @@
 				<div class="ft-in"> 
 					<div class="footer-defined"> 
 						<em class="site-name">微博趋势</em> 
-						<a target="_blank" href="#" target="_blank">意见反馈</a> 
-						| <a target="_blank" href="#" target="_blank">帮助中心</a>
+						意见反馈
+						| 帮助中心
 					</div> 
 					<img src="https://developers.google.com/appengine/images/appengine-noborder-120x30.gif" 
 					alt="Powered by Google App Engine" />
