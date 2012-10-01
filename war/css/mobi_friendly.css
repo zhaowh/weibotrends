@@ -1,0 +1,17 @@
+	@media
+	only screen and (max-width : 1024px)
+	{
+		#wrapper .wrapper-in{ width:600px; max-width: 600px;}
+		#container{width:600px; background:#fff url(null); }
+		#container .sidebar{width:0px; display:none;}
+		#container .main{ margin-right:0px; background:white }
+	}
+
+	@media 
+	only screen and (min-width : 1024px)
+	{
+		#wrapper .wrapper-in{width:800px ;  max-width: 800px;}
+		#container{width:800px; background:#fff url(bgimg/user_y_bg.png) repeat-y right; }
+		#container .sidebar{width:200px; display:block;}
+		#container .main{ margin-right:200px;}
+¡¡¡¡}
