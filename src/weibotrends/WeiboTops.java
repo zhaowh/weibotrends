@@ -357,14 +357,15 @@ public class WeiboTops  implements java.io.Serializable {
 		all.putAll(newTweets);
 		
 		//标记已转发微博
-		if (repostedIds!=null)
-		for (long id : repostedIds){
-			Tweet t = all.get(id);
-			if (t!=null){
-				t.setRetweeted(true);
+		if (repostedIds!=null){
+			log.fine("reposted by me:" + repostedIds.size());
+			for (long id : repostedIds){
+				Tweet t = all.get(id);
+				if (t!=null){
+					t.setRetweeted(true);
+				}
 			}
-		}
-		
+		}		
 		log.fine("all: " + all.size());
 		return all;
 	}
@@ -441,6 +442,8 @@ public class WeiboTops  implements java.io.Serializable {
 		if (!t.isRetweeted() 
 				&& (t.getPrimaryTweet()==null || !t.getPrimaryTweet().isRetweeted())) 
 		{
+			log.fine(" reposting: " + t);
+			
 			Status s = this.weibo
 					.repost(String.valueOf(t.getId()), null, 0);
 			
@@ -473,8 +476,12 @@ public class WeiboTops  implements java.io.Serializable {
 		if (tops.isEmpty())
 			return false;
 
-		if (this.userConfig.isDisabled())
+		if (this.userConfig.isDisabled()){
+			log.fine(" repost disabled.");
 			return false;
+		}
+		
+		
 		
 		if (!reposted) {
 			// 转发速度第一
@@ -488,6 +495,7 @@ public class WeiboTops  implements java.io.Serializable {
 			// 转发最新
 			reposted = repostFirst(tops.values());
 		}
+		log.fine(" reposted:" + reposted);
 		return reposted;
     }
     

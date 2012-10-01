@@ -202,8 +202,9 @@ public class Weibo implements java.io.Serializable {
 		Future<HTTPResponse> response = client.getAsync(
 				WeiboConfig.getValue("baseURL")+"statuses/repost_by_me.json",
 				new PostParameter[] {
-					new PostParameter("since_id", String.valueOf(sinceId))
-				}				
+					new PostParameter("since_id", String.valueOf(sinceId)),
+					new PostParameter("count", "100")
+				}
 			);
 		return response;
 	}	
