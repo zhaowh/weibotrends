@@ -15,6 +15,7 @@
 <meta name="viewport" content="width=device-width" />
 <title>微博趋势 - 最新热点</title> 
 <link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
  
 <link href="/css/base.css" rel="stylesheet" type="text/css" /> 
 <link href="/css/mobi_friendly.css" rel="stylesheet" type="text/css" />
@@ -100,6 +101,8 @@
 								<a class="sub-link" rel="e:fl,u:1862386965,t:2" href="#">关注他</a> 
 							</li> 
 						</ul> 
+						
+						<p><img src="/mobile-friendly.jpg" width="148" height="105" alt="Mobile friendly." title="本网站使用移动终端也能正常浏览"></img></p>
 					</div> 
 				</div> 
 				
