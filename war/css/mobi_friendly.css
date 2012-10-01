@@ -1,17 +1,22 @@
+
+	#container .main{ margin-right:200px;}
+
 	@media
-	only screen and (max-width : 1024px)
+	only screen and (max-width : 800px)
 	{
-		#wrapper .wrapper-in{ width:600px; max-width: 600px;}
-		#container{width:600px; background:#fff url(null); }
+		#wrapper .wrapper-in{ width:auto;  min-width:500px;}
+		#header{min-width:500px;};
+		#container{ background:#fff url(null); min-width:500px; }
 		#container .sidebar{width:0px; display:none;}
-		#container .main{ margin-right:0px; background:white }
+		#container .main{ margin-right:0px; background:white; min-width:500px; }
+		#xwb_weibo_list {padding:10px 5px 0px 0px}
 	}
 
 	@media 
-	only screen and (min-width : 1024px)
+	only screen and (min-width : 800px)
 	{
-		#wrapper .wrapper-in{width:800px ;  max-width: 800px;}
-		#container{width:800px; background:#fff url(bgimg/user_y_bg.png) repeat-y right; }
-		#container .sidebar{width:200px; display:block;}
-		#container .main{ margin-right:200px;}
+		#wrapper .wrapper-in{width:800px; max-width: 800px;}
+		#container{background:#fff url(bgimg/user_y_bg.png) repeat-y right; }
+		#container .sidebar{float:right; _margin-left:-3px; width:200px; display:block;}
+		#container .main{ margin-right:200px; padding-bottom:10px; _margin-right:197px; _zoom:1;}
 ¡¡¡¡}

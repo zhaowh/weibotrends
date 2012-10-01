@@ -169,7 +169,7 @@ for (Tweet t : tweets){
 	|<a href="javascript:;" rel="e:cm" id="cm ">评论(<%=t.getCommentsCount()%>)</a>
  -->	 
 	|<a href="http://weibo.com/<%=t.getUserId()%>/<%=formatMid(t.getMid())%>" target="_blank">评论(<%=t.getCommentsCount()%>)</a>
-	</p><span><%=formatTime(t.getCreatedAt())%> <!--来自 <%=t.getSourceName()%>--></span>  <span>传播速度：<%=formatSpeed(t.getRepostSpeed(), t.getRtAcceleration())%>  </span>
+	</p><span><%=formatTime(t.getCreatedAt())%> <!--来自 <%=t.getSourceName()%>--></span>  <span>热度:<%=formatSpeed(t.getRepostSpeed(), t.getRtAcceleration())%>  </span>
 	
 		
 	  </div> 
