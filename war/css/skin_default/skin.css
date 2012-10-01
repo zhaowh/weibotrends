@@ -257,7 +257,7 @@ a:hover { text-decoration:underline;}
 	.title-tab .tab-current:hover{ background-position:left -416px; }
 	.title-tab .tab-current span:hover{ background-position:right -454px;}
 	/*第一种tab样式 tab-style-1简写tab-s1*/
-	.tab-s1{ position:relative; margin:auto; width:800px; height:38px; overflow:hidden;}
+	.tab-s1{ position:relative; margin:auto; width:100%; height:38px; overflow:hidden;}
 	.tab-s1 span{ float:left; margin:5px 0 0 10px;; height:33px; line-height:33px; font-size:14px;}
 	.tab-s1 span a{ margin:0 5px; padding:0 20px 0 15px; color:#000; outline:none;}
 	.tab-s1 span a:hover{ color:#0082cb;}
@@ -287,7 +287,7 @@ a:hover { text-decoration:underline;}
 	#guide-page .tab-s4{ background:url(bgimg/tab_s4_bg_g.png) bottom no-repeat;}
 	/*第五种tab样式（用于换肤弹出层）*/
 	.tab-s5{ padding-top:3px; height:35px; line-height:32px; background-color:#fff; background-position:0 -452px;}
-	.tab-s5 .tab-s5-in{ position:relative; margin:auto; width:800px;}
+	.tab-s5 .tab-s5-in{ position:relative; margin:auto; width:100%;}
 	.tab-s5 span{ float:left; font-size:14px;}
 	.tab-s5 span a{ margin:0 5px; padding:0 18px 0 13px; color:#000; outline:none;}
 	.tab-s5 .current{ background-position:left -502px; font-weight:700;}

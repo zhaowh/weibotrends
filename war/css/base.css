@@ -22,21 +22,22 @@ textarea{ font-family:Tahoma, Geneva, sans-serif; resize:none;}
 .all-bg{ background:url(bgimg/all_bg.png) no-repeat;}
 .bind-btn-bg {background:url(bgimg/bind_btn_bg.png) no-repeat;}
 
-#wrapper .wrapper-in{ _zoom:1;}
+#wrapper {}
+#wrapper .wrapper-in{position:relative; margin:auto;  max-width: 800px; _zoom:1;}
 
 /*头部*/
 #header{}
-#header .inner-header{ position:relative; margin:auto; width:800px; height:90px; z-index:100;}
+#header .inner-header{ position:relative; margin:auto; width:auto; height:90px; z-index:100;}
 
 /*容器主体布局*/
-#container{ position:relative; margin:0 auto 20px; width:800px; _zoom:1; }
+#container{ position:relative; margin:0 auto 20px; width:100%; _zoom:1; }
 #container:after{ display:block; content:"　"; clear:both; height:0;}
-#container .sidebar{ float:right; _margin-left:-3px; width:200px;}
-#container .main{ margin-right:200px; padding-bottom:10px; _margin-right:197px; _zoom:1;}
+#container .sidebar{width:200px;  float:right; }
+#container .main{padding-bottom:10px; _zoom:1;}
 
 /*底部*/
 #footer {}
-#footer .ft-in{ margin:0 auto 20px; width:800px;}
+#footer .ft-in{ margin:0 auto 20px; width:100%;}
 #footer .ft-in span {margin-left:15px;}
 #footer .ft-in .footer-defined{ float:right; margin-right:10px;}
 #footer .ft-in a{ margin:0 3px;}
@@ -47,7 +48,7 @@ textarea{ font-family:Tahoma, Geneva, sans-serif; resize:none;}
 
 /*导航菜单*/
 .nav{ position:relative; padding-top:4px; height:26px; line-height:22px;  z-index:1000;}
-.nav .inner-nav{ position:relative; margin:auto; width:800px; z-index:10000;}
+.nav .inner-nav{ position:relative; margin:auto; width:100%; z-index:10000;}
 .nav .nav-right{ position:absolute; top:0; right:0;}
 .nav a{ margin:0 3px; padding:2px 5px;}
 .nav a:hover{ text-decoration:none;}
@@ -357,7 +358,7 @@ textarea{ font-family:Tahoma, Geneva, sans-serif; resize:none;}
 .inhibit-txt p strong {color:#f00;line-height:2;}
 
 /*广告*/
-.xad{ margin:0 auto 10px; width:800px;}
+.xad{ margin:0 auto 10px; width:100%;}
 .xad a{ display:block;}
 .xad img{ display:block;}
 .xad ins{ *position:static!important;}
@@ -369,7 +370,7 @@ textarea{ font-family:Tahoma, Geneva, sans-serif; resize:none;}
 .xad-box-p1 {margin:20px;width:560px;}
 .xad-box-p2 {margin:20px 0;width:550px;}
 .xad-box-p3 {margin:30px 10px;width:180px;}
-.xad-box-p4 {margin:0 auto 20px;width:800px;overflow:hidden;}
+.xad-box-p4 {margin:0 auto 20px;width:100%;overflow:hidden;}
 .xad-box .icon-close-btn{ position:absolute; top:8px; right:8px; text-indent:-9999em; overflow:hidden; }
 
 
@@ -773,7 +774,7 @@ textarea{ font-family:Tahoma, Geneva, sans-serif; resize:none;}
 
 /*设置皮肤浮层*/
 .set-skin{ background:#fff; border-bottom:2px solid #ddd;}
-.set-skin .set-skin-in{ margin:auto; width:800px; }
+.set-skin .set-skin-in{ margin:auto; width:100%; }
 .set-skin .skin-list { margin-bottom:18px; overflow:hidden; zoom:1;}
 .set-skin .skin-list a{ float:left; margin:18px 6px 0; _margin-right:5px; padding:2px; border:1px solid #b4b4b4; height:80px; color:#999;}
 .set-skin .skin-list a:visited{ color:#999;}

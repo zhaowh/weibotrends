@@ -12,15 +12,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml"> 
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width" />
 <title>微博趋势 - 最新热点</title> 
-<link rel="shortcut icon" href="/favicon.ico" /> 
+<link rel="shortcut icon" href="/favicon.ico" />
+ 
 <link href="/css/base.css" rel="stylesheet" type="text/css" /> 
-<link href="/css/skin_default/skin.css" rel="stylesheet" type="text/css" /> 
+<link href="/css/mobi_friendly.css" rel="stylesheet" type="text/css" />
+
+<!--[if lt IE 9]>
+　<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+<![endif]-->
 
 <script type="text/javascript" src="/js/jquery.min.js"></script> 
 <script type="text/javascript" src="/js/xwbapi.min.js"></script> 
 <script type="text/javascript" src="/js/xwb.min.js"></script> 
+
     
 </head> 
 <body id="home" class="own"> 
