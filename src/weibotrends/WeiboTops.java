@@ -52,6 +52,7 @@ public class WeiboTops  implements java.io.Serializable {
 		initUserConfig(uid, accessToken);
 	}
 	
+
 	private void initUserConfig(String uid, String accessToken){
 		DAO dao = DAOFactory.getDAO();
 		this.userConfig = dao.fetchUserConfig(uid);
@@ -64,6 +65,11 @@ public class WeiboTops  implements java.io.Serializable {
 		}
 	}
 	
+	private void reloadUserConfig(){
+		DAO dao = DAOFactory.getDAO();
+		this.userConfig = dao.fetchUserConfig(this.userConfig.getUserId());
+	}
+		
 	public User getUser() throws WeiboException{
 		if (this.user == null){
 			this.user = weibo.showUserById(this.userConfig.getUserId());
@@ -316,20 +322,24 @@ public class WeiboTops  implements java.io.Serializable {
 		return weibo.preRepostsByMe(sinceId);
 	}
 	
-    //加载已转发微博ID
+    //刷新已转发微博ID
 	private  Set<Long> loadRepostsByMe( Future<HTTPResponse> task) throws WeiboException{
+		Set<Long> ids = this.userConfig.getRepostedIds();
 		List<Status> list = weibo.getRepostsByMe(task);
 		if (list!=null && !list.isEmpty()){
+			reloadUserConfig();
 			for (Status s : list){
 				this.userConfig.addRepostedId(Long.parseLong(s.getId()));
 				if (s.getRetweetedStatus()!=null){
 					this.userConfig.addRepostedId(Long.parseLong(s.getRetweetedStatus().getId()));
 				}
 			}
+			ids = this.userConfig.getRepostedIds();
 			saveUserConfig(this.userConfig);
-			log.fine("loaded reposted: " + list.size());
+			log.fine("loaded reposted: " + list.size() + " all:" + ids.size());
 		}
-		return this.userConfig.getRepostedIds();
+		log.fine("all:" + ids.size());
+		return ids;
 	}
 	
 	
@@ -373,6 +383,8 @@ public class WeiboTops  implements java.io.Serializable {
 	// 搜索热门转发微博
 	private Map<Long, Tweet> searchTopTweets(Map<Long, Tweet> all) {
 		TreeMap<Long, Tweet> tops = new TreeMap<Long, Tweet>();
+    	reloadUserConfig();//重新加载用户最新配置信息
+    	
 		WeiboFilter filter = new WeiboFilter(this.userConfig.getExcludedWords());
 
 		for (Tweet t : all.values()) {
@@ -432,16 +444,28 @@ public class WeiboTops  implements java.io.Serializable {
     	}
     }
     
-	public  boolean isRetweeted(long id) {
+	private  boolean isRetweeted(long id) {
+		boolean isRetweeted = false;
 		//标记已转发微博
-		Set<Long> repostedIds = this.userConfig.getRepostedIds();
-		if (repostedIds==null) return true; //未取到已转发id
+		Set<Long> ids = this.userConfig.getRepostedIds();
+		if (ids==null) return true; //未取到已转发id
 		
-		return repostedIds.contains(id);
+		isRetweeted = ids.contains(id);
+		
+		log.finest(isRetweeted + ": " + id +" in " + ids.size());
+
+		return isRetweeted;
 	}
 	
 	public  boolean isRetweeted(Tweet t) {
 		if (t==null) return false;
+		
+		boolean retweeted = isRetweeted(t.getId());
+
+		if (t.getPrimaryTweet()!=null ){
+			retweeted = retweeted && isRetweeted(t.getPrimaryTweet().getId());
+		}
+		
 		return isRetweeted(t.getId());
 	}
     
@@ -451,9 +475,7 @@ public class WeiboTops  implements java.io.Serializable {
     	//TODO String rtStr = this.userConfig.getRepostTmpl();
     	
     	Tweet t = tweets.iterator().next();
-		if (!isRetweeted(t.getId()) 
-				&& (t.getPrimaryTweet()==null || !isRetweeted(t.getPrimaryTweet().getId()))
-			) {
+		if (!isRetweeted(t) ) {
 			log.fine(" reposting: " + t);
 			
 			Status s = this.weibo

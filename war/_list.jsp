@@ -152,7 +152,7 @@ for (Tweet t : tweets){
 
 		<div class="feed-info"><p>
 <%
-	if (wt.isRetweeted(t.getId())){
+	if (wt.isRetweeted(t)){
 %>
 	 已转发(<%=t.getRepostsCount()%>)
 <%

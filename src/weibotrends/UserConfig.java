@@ -184,26 +184,21 @@ public class UserConfig  implements java.io.Serializable {
 	}
 
 	public void addRepostedId(Long id) {
-		if (repostedIds == null){
-			repostedIds = new TreeSet<Long>();
-		}
 		if (this.repostedIds.size()>100){//最多保存100个
 			this.repostedIds.pollFirst();
 		}
 		this.repostedIds.add(id);
+		log.finest(id+" added. size="+this.repostedIds.size());
 	}
 
 	public Set<Long> getRepostedIds() {
-		if (repostedIds!=null){
-			return repostedIds.descendingSet();
-		}else{
-			return Collections.emptySet();
-		}
+		log.finest("size="+this.repostedIds.size());
+		return this.repostedIds;
 	}
 
 	public long getLastRepostedId(){
 		long id = 0;
-		if (repostedIds!=null && !this.repostedIds.isEmpty()){
+		if (this.repostedIds!=null && !this.repostedIds.isEmpty()){
 			id = this.repostedIds.last();
 		}
 		if (id<0) id=0; //?

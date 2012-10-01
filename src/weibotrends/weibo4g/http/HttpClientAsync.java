@@ -96,7 +96,7 @@ public class HttpClientAsync implements java.io.Serializable {
 				url += "&" + encodedParams;
 			}
 		}
-		log.fine("GET:" + url);
+		log.finest("GET:" + url);
 		HTTPRequest req;
 		try {
 			req = new HTTPRequest(new URL(url), HTTPMethod.GET, fetchOptions);
