@@ -512,14 +512,14 @@ public class WeiboTops  implements java.io.Serializable {
 		}
 		
 		
+		if (!reposted) {
+			// 转发加速度第一
+			reposted = repostFirst(sortTweets(tops, "byAcc"));
+		}
 		
 		if (!reposted) {
 			// 转发速度第一
 			reposted = repostFirst(sortTweets(tops, "bySpeed"));
-		}
-		if (!reposted) {
-			// 转发加速度第一
-			reposted = repostFirst(sortTweets(tops, "byAcc"));
 		}
 		if (!reposted) {
 			// 转发最新
