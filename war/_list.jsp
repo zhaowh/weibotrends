@@ -9,7 +9,7 @@
 <%@ page import="weibotrends.WeiboUtils" %>
 <%
 	User user = (User)session.getAttribute("user");
-	WeiboTops wt = (WeiboTops)session.getAttribute("weiboTops");
+	WeiboTops wt = (WeiboTops)request.getAttribute("weiboTops");
 	Collection<Tweet> tweets = (Collection<Tweet>)request.getAttribute("tweets");
 %>
 <%!
@@ -90,8 +90,13 @@ for (Tweet t : tweets){
 	<%=t.getScreenName()%><%=formatVerfied(t.isVerified()) %>
 </a>：<%=formatText(t.getText())%>
 <%
-	if (t.getRetweet()!=null){
-		Map<String, Tweet> rts = t.getUserRetweets();
+	Map<String, Tweet> rts 
+	= 
+		wt.getUserConfig().isFollowedOnly()?
+		t.getFriendRetweets(wt.getUserConfig().getFollowedIds()):
+		t.getUserRetweets()
+		;
+	if (rts!=null && !rts.isEmpty()){
 		Iterator<Tweet> itr = rts.values().iterator();
 		int i = 0;
 %><div class="blur-txt"> 由

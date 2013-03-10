@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+
 import weibo4j.http.AccessToken;
 import weibo4j.model.Paging;
 import weibo4j.model.PostParameter;
@@ -13,6 +14,8 @@ import weibo4j.model.Status;
 import weibo4j.model.StatusWapper;
 import weibo4j.model.User;
 import weibo4j.model.WeiboException;
+import weibo4j.org.json.JSONArray;
+import weibo4j.org.json.JSONException;
 import weibo4j.util.WeiboConfig;
 import weibotrends.weibo4g.http.HttpClientAsync;
 import weibotrends.weibo4g.model.Count;
@@ -123,16 +126,16 @@ public class Weibo implements java.io.Serializable {
     public  List<Count> getCounts(List<Future<HTTPResponse>> respList) throws WeiboException{
     	List<Count> list = new ArrayList<Count>();
     	for (Future<HTTPResponse> f : respList){
-    		HTTPResponse resp;
 			try {
+				HTTPResponse resp;
 				resp = f.get();
+				List<Count> l = Count.constructCounts(client.getResponse(resp));
+				log.finest("get: " +l.size());
+	    		list.addAll(l);
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new WeiboException(e);
+				log.warning(e.toString());
 			}
-			List<Count> l = Count.constructCounts(client.getResponse(resp));
-			log.finest("get: " +l.size());
-    		list.addAll(l);
     	}
     	return list;
     }	
@@ -177,11 +180,16 @@ public class Weibo implements java.io.Serializable {
 	public List<Status> getFriendsTimeline(List<Future<HTTPResponse>> respList) throws WeiboException{
 		List<Status> list = new ArrayList<Status>();
 		for (Future<HTTPResponse> f : respList){
-			StatusWapper w = Status.constructWapperStatus(this.client.getResponse(f));
-			log.finest("get: " + w.getStatuses().size());
-			list.addAll(w.getStatuses());
-			if (w.getStatuses().size()<TIMELINE_PAGE_SIZE) { //已无数据
-				break;
+			try{
+				StatusWapper w = Status.constructWapperStatus(this.client.getResponse(f));
+				log.finest("get: " + w.getStatuses().size());
+				list.addAll(w.getStatuses());
+				if (w.getStatuses().size()<TIMELINE_PAGE_SIZE) { //已无数据
+					break;
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
+				log.warning(ex.toString());
 			}
 		}
 		return list;
@@ -211,9 +219,14 @@ public class Weibo implements java.io.Serializable {
 	
 	public List<Status> getRepostsByMe(Future<HTTPResponse>  future) throws WeiboException{
 		List<Status> list = new ArrayList<Status>();
-		StatusWapper w = Status.constructWapperStatus(this.client.getResponse(future));
-		log.finest("get: " + w.getStatuses().size());
-		list.addAll(w.getStatuses());
+		try{
+			StatusWapper w = Status.constructWapperStatus(this.client.getResponse(future));
+			log.finest("get: " + w.getStatuses().size());
+			list.addAll(w.getStatuses());
+		}catch(Exception e){
+			e.printStackTrace();
+			log.warning(e.toString());
+		}
 		return list;
 	}
 	
@@ -247,6 +260,69 @@ public class Weibo implements java.io.Serializable {
 				},
 				true
 			));
+	}
+	
+	
+
+
+	/**
+	 * 获取用户关注的用户UID列表
+	 * 
+	 * @param uid
+	 *            需要查询的用户UID
+	 * @return ids
+	 * @throws WeiboException
+	 *             when Weibo service or network is unavailable
+	 * @version weibo4j-V2 1.0.0
+	 * @see <a
+	 *      href="http://open.weibo.com/wiki/2/friendships/friends/ids">friendships/friends/ids</a>
+	 * @since JDK 1.5
+	 */
+	public  Future<HTTPResponse>  preFriendsIdsByUid(String uid) throws WeiboException {
+		Future<HTTPResponse> response = client.getAsync(
+				WeiboConfig.getValue("baseURL")
+						+ "friendships/friends/ids.json",
+				new PostParameter[] {
+					new PostParameter("uid", uid),
+					new PostParameter("count", "5000")
+				});
+		return response;
+	}
+
+	/**
+	 * 获取用户关注的用户UID列表
+	 * 
+	 * @param  screen_name
+	 *            需要查询的用户昵称
+	 * @return ids
+	 * @throws WeiboException
+	 *             when Weibo service or network is unavailable
+	 * @version weibo4j-V2 1.0.0
+	 * @see <a
+	 *      href="http://open.weibo.com/wiki/2/friendships/friends/ids">friendships/friends/ids</a>
+	 * @since JDK 1.5
+	 */
+	public  Future<HTTPResponse>  preFriendsIdsByName(String screen_name) throws WeiboException {
+		Future<HTTPResponse> response = client.getAsync(
+				WeiboConfig.getValue("baseURL")
+						+ "friendships/friends/ids.json",
+						new PostParameter[] {
+							new PostParameter("screen_name", screen_name),
+							new PostParameter("count", "5000")
+						}
+				
+		);
+		return response;
+	}
+	
+	public String[] getFriendsIds(Future<HTTPResponse>  future)  throws WeiboException {
+		try{
+			return User.constructIds(this.client.getResponse(future));
+		}catch(Exception e){
+			e.printStackTrace();
+			log.warning(e.toString());
+			return new String[]{};
+		}
 	}
 	
 }

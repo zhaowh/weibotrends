@@ -43,7 +43,8 @@
 			<textarea name="included_words" cols=54 rows=6><%=conf.getIncludedWords()%></textarea>
 			<br>
 			<input type=checkbox name="followed_first" value="true" <% if (conf.isFollowedFirst()) out.print("checked");  %> >已关注用户原创微博优先（应用屏蔽关键字，不应用包含关键字）
-			<br><br>
+			<br>
+			<br>
 			
 			<script type="text/javascript" >
 			function toggleAutoRTConfig(){
@@ -65,15 +66,18 @@
 			<br>
 			<div id="auto_rt_config_div" <% if (conf.isDisabled()) out.print(" style=\"display:none\" "); %>  >
 				<font color="blue">已启用自动转发功能，系统定时搜索最新热门微博并自动转发</font>
-				<br><br>
-				转发时间间隔:<input type=text name="rt_interval" size=6 value="<%=conf.getRtInterval()%>" >分钟（每次自动转发的时间间隔） 
 				<br>
+				<br> 
 				最长发布时间:<input type=text name="max_posted_hour" size=6 value="<%=conf.getMaxPostedHour()%>" >小时（仅转发该时间段内发布的微博） 
+				<!--
+				<br>
+				转发时间间隔:<input type=text name="rt_interval" size=6 value="<%=conf.getRtInterval()%>" >分钟（每次自动转发的时间间隔） 
 				<br><br>
 				<b>转发内容</b>：<input type=text name="repost_tmpl" size=45 maxlength="120" value="<%=conf.getRepostTmpl()%>" > </input>
 				<br>
 				<b>评论内容</b>：<input type=text name="reply_tmpl"  size=45 maxlength="120" value="<%=conf.getReplyTmpl()%>"> </input><br>
 				${now}会自动替换为当前时间，${me}替换为<b>@<%=user.getScreenName()%> </b>，${rt}替换为转发内容<br>
+				 -->
 			</div>
 			
 			<br><input type=submit name="save" value=" 保存配置 ">

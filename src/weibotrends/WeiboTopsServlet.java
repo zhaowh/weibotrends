@@ -34,7 +34,7 @@ public class WeiboTopsServlet extends HttpServlet {
 			}
 			
 			HttpSession session = req.getSession(true);
-			if (session.getAttribute("weiboTops") == null ){
+			if (session.getAttribute("user") == null ){
 				login(req, resp);
 				return;
 			}
@@ -54,6 +54,11 @@ public class WeiboTopsServlet extends HttpServlet {
 		}
 	}	
 	
+	private WeiboTops getWeiboTops(HttpServletRequest req){
+		User user = (User)req.getSession().getAttribute("user");
+		return new WeiboTops(Long.parseLong(user.getId()));
+	}
+	
 	public void login(HttpServletRequest req, HttpServletResponse resp)throws IOException, ServletException {
 		req.getRequestDispatcher("login.jsp").forward(req, resp);
 	}
@@ -62,7 +67,7 @@ public class WeiboTopsServlet extends HttpServlet {
 		HttpSession session = req.getSession(true);
 		String code = req.getParameter("code");
 		WeiboTops weiboTops = new WeiboTops(code);
-		session.setAttribute("weiboTops", weiboTops);
+		//session.setAttribute("weiboTops", weiboTops);
 		session.setAttribute("user", weiboTops.getUser());
 
 		//listTops(req, resp);
@@ -70,8 +75,7 @@ public class WeiboTopsServlet extends HttpServlet {
 	}
 	
 	public void refresh(HttpServletRequest req, HttpServletResponse resp)throws IOException, ServletException, WeiboException {
-		HttpSession session = req.getSession();
-		WeiboTops wt = (WeiboTops)session.getAttribute("weiboTops");
+		WeiboTops wt = getWeiboTops(req);
 
 		wt.searchTopTweets();
 
@@ -79,17 +83,16 @@ public class WeiboTopsServlet extends HttpServlet {
 	}
 	
 	public void listTops(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		HttpSession session = req.getSession();
-		WeiboTops wt = (WeiboTops)session.getAttribute("weiboTops");
+		WeiboTops wt = getWeiboTops(req);
 		String orderType = req.getParameter("order");
 		Collection<Tweet> tweets =  wt.loadTopTweets(orderType);
+		req.setAttribute("weiboTops", wt);
 		req.setAttribute("tweets", tweets);
 		req.getRequestDispatcher("main.jsp").forward(req, resp);
 	}	
 	
 	public void showConfig(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		HttpSession session = req.getSession();
-		WeiboTops wt = (WeiboTops)session.getAttribute("weiboTops");
+		WeiboTops wt = getWeiboTops(req);
 		UserConfig conf = wt.getUserConfig(); 	
 		req.setAttribute("userConfig", conf);
 		req.getRequestDispatcher("main.jsp").forward(req, resp);
@@ -137,8 +140,7 @@ public class WeiboTopsServlet extends HttpServlet {
 	}
 		
 	public void saveConfig(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		HttpSession session = req.getSession();
-		WeiboTops wt = (WeiboTops)session.getAttribute("weiboTops");
+		WeiboTops wt = getWeiboTops(req);
 		UserConfig conf = wt.getUserConfig(); 
 		
 		conf.setMinRtCount(getInt(req,"min_rt_count",conf.getMinRtCount()));
@@ -151,14 +153,11 @@ public class WeiboTopsServlet extends HttpServlet {
 		conf.setRepostTmpl(get(req,"repost_tmpl",conf.getRepostTmpl()));
 		conf.setReplyTmpl(get(req,"reply_tmpl",conf.getReplyTmpl()));
 		conf.setExcludedWords(get(req,"excluded_words",conf.getExcludedWords()));
-		conf.setIncludedWords(get(req,"",conf.getIncludedWords()));
+		conf.setIncludedWords(get(req,"included_words",conf.getIncludedWords()));
 		conf.setFollowedFirst(getBool(req,"followed_first",conf.isFollowedFirst()));
 		
 		wt.saveUserConfig(conf);
 		
-		//fix gae session cache delay
-		session.removeAttribute("weiboTops");
-		session.setAttribute("weiboTops", wt);
 
 		showConfig(req, resp);
 	}

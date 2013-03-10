@@ -1,12 +1,11 @@
 package weibotrends;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -68,9 +67,14 @@ public class UserConfig  implements java.io.Serializable {
 	@Persistent 
 	private Date lastRtTime = new Date(System.currentTimeMillis());
 	
+
 	@Persistent 
 	private TreeSet<Long> repostedIds = new TreeSet<Long>();
 	
+	@Persistent 
+	private Set<String> followedIds = new HashSet<String>();
+	
+		
 	public UserConfig(){
 
 	}
@@ -192,7 +196,7 @@ public class UserConfig  implements java.io.Serializable {
 	}
 
 	public Set<Long> getRepostedIds() {
-		log.finest("size="+this.repostedIds.size());
+		//log.finest("size="+this.repostedIds.size());
 		return this.repostedIds;
 	}
 
@@ -206,5 +210,17 @@ public class UserConfig  implements java.io.Serializable {
 		return id;
 
 	}
+
+	public void setFollowedIds(String[] followedIds) {
+		this.followedIds = new HashSet<String>();
+		for (String id : followedIds){
+			this.followedIds.add(id);
+		}
+	}
+
+	public Set<String> getFollowedIds() {
+		return followedIds;
+	}
+
 	
 }

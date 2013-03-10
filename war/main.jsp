@@ -52,7 +52,7 @@
 
 							<span class="user-link"> 
 								<a  href="http://weibo.com/<%=user.getId()%>" target="_blank"><%=user.getName()%></a> 
-								| <a href="/action.php?m=account.logout">退出</a> 
+								| <a href="http://weibo.com/logout.php">退出</a> 
 							</span> 
 						</div> 
 					</div> 
@@ -93,13 +93,13 @@
 						<p><%=user.getDescription()%></p> 
 					</div>  
   					<div class="user-sidebar"> 
-						<div class="sidebar-head">猜你喜欢</div> 
+						<div class="sidebar-head">敬请关注</div> 
 						<ul> 
 							<li> 
 								<a href="http://weibo.com/1862386965" title="微博趋势"  target="_blank">
 									<img src="http://tp2.sinaimg.cn/1862386965/50/1296452915/1" alt="微博趋势" title="你们有相同的话题" /></a> 
 								<p><a href="http://weibo.com/1862386965" target="_blank">微博趋势</a></p> 
-								<a class="sub-link" rel="e:fl,u:1862386965,t:2" href="#">关注他</a> 
+								<!-- a class="sub-link" rel="e:fl,u:1862386965,t:2" href="#">关注他</a  --> 
 							</li> 
 						</ul> 
 						

@@ -2,7 +2,9 @@ package weibotrends;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
@@ -47,9 +50,15 @@ public class WeiboTops  implements java.io.Serializable {
 	}
 
 	public WeiboTops(String uid, String accessToken){
-		weibo = new Weibo();
-		weibo.setToken(accessToken);
 		initUserConfig(uid, accessToken);
+		weibo = new Weibo();
+		weibo.setToken(getUserConfig().getAccessToken());
+	}
+	
+	public WeiboTops(long uid){
+		initUserConfig(String.valueOf(uid), null);
+		weibo = new Weibo();
+		weibo.setToken(getUserConfig().getAccessToken());
 	}
 	
 
@@ -59,7 +68,7 @@ public class WeiboTops  implements java.io.Serializable {
 		if (this.userConfig == null ){
 			this.userConfig = new UserConfig(uid, accessToken);
 			dao.storeUserConfig(this.userConfig);
-		}else if (!accessToken.equals(this.userConfig.getAccessToken())){
+		}else if (accessToken!=null && !accessToken.equals(this.userConfig.getAccessToken())){
 			this.userConfig.setAccessToken(accessToken);
 			dao.storeUserConfig(this.userConfig);
 		}
@@ -70,13 +79,7 @@ public class WeiboTops  implements java.io.Serializable {
 		this.userConfig = dao.fetchUserConfig(this.userConfig.getUserId());
 	}
 		
-	public User getUser() throws WeiboException{
-		if (this.user == null){
-			this.user = weibo.showUserById(this.userConfig.getUserId());
-		}
-		return this.user ;
-	}
-	
+
 	public void saveUserConfig(UserConfig userConfig){
 		this.userConfig = userConfig;
 		DAO dao = DAOFactory.getDAO();
@@ -87,7 +90,15 @@ public class WeiboTops  implements java.io.Serializable {
 		return this.userConfig;
 	}
 
-
+	public User getUser() throws WeiboException{
+		if (this.user == null){
+			this.user = weibo.showUserById(this.userConfig.getUserId());
+			this.userConfig.setName(this.user.getScreenName());
+			saveUserConfig(this.userConfig);
+		}
+		return this.user ;
+	}
+	
 	//计算转发速度
 	private static double calcRtSpeed(int reposts, int comments, Date createdAt,  int follows){
 		double durHours = (System.currentTimeMillis() - createdAt.getTime())/1000.0/60/60;
@@ -342,6 +353,16 @@ public class WeiboTops  implements java.io.Serializable {
 		return ids;
 	}
 	
+	private Set<String> loadFriendsIds( Future<HTTPResponse> task) throws WeiboException{
+		String[] fids = weibo.getFriendsIds(task);
+		if (fids!=null && fids.length>0){
+			this.userConfig.setFollowedIds(fids);
+			saveUserConfig(this.userConfig);
+			log.fine("friends: " + this.userConfig.getFollowedIds().size());
+		}
+		return this.userConfig.getFollowedIds();
+	}
+	
 	
 	private  static long getMaxId(Map<Long, Tweet> tweets){
 		long maxId = 0;
@@ -350,9 +371,7 @@ public class WeiboTops  implements java.io.Serializable {
 		}
 		return maxId;
 	}
-
-    	
-	
+ 
 	//加载所有微博
 	private Map<Long, Tweet> loadAllTweets() throws WeiboException{
 		Map<Long, Tweet> cachedTweets = loadCachedTweets();
@@ -363,17 +382,20 @@ public class WeiboTops  implements java.io.Serializable {
 		Future<HTTPResponse> myRepostsTasks = preRepostsByMe();
 		List<Future<HTTPResponse>> recountTasks = preRecountTweets(cachedTweets);
 
+		Future<HTTPResponse> friendsTask = weibo.preFriendsIdsByUid(this.userConfig.getUserId());
+		//更新关注ID
+		loadFriendsIds(friendsTask);
+		
 		//刷新缓存微博计数及速度
 		recountTweets(cachedTweets, recountTasks);
 		//加载已转发微博ID
-		Set<Long> repostedIds =  loadRepostsByMe(myRepostsTasks);
+		loadRepostsByMe(myRepostsTasks);
 		//加载新微博
 		Map<Long, Tweet> newTweets = loadNewTweets(newTasks);
 		
 		Map<Long, Tweet> all = new HashMap<Long, Tweet>(cachedTweets.size() + newTweets.size());
 		all.putAll(cachedTweets);
 		all.putAll(newTweets);
-		
 
 		log.fine("all: " + all.size());
 		return all;
@@ -383,9 +405,9 @@ public class WeiboTops  implements java.io.Serializable {
 	// 搜索热门转发微博
 	private Map<Long, Tweet> searchTopTweets(Map<Long, Tweet> all) {
 		TreeMap<Long, Tweet> tops = new TreeMap<Long, Tweet>();
-    	reloadUserConfig();//重新加载用户最新配置信息
+    	reloadUserConfig();//重新加载用户最新配置信息更新已转发贴
     	
-		WeiboFilter filter = new WeiboFilter(this.userConfig.getExcludedWords());
+		WeiboFilter filter = new WeiboFilter(this.userConfig.getExcludedWords(), this.userConfig.getIncludedWords(), this.userConfig.getFollowedIds(), this.userConfig.isFollowedOnly(), this.userConfig.isFollowedFirst(), this.userConfig.isVerifiedOnly());
 
 		for (Tweet t : all.values()) {
 			if (t.getRepostsCount() < this.userConfig.getMinRtCount())
@@ -393,11 +415,17 @@ public class WeiboTops  implements java.io.Serializable {
 			if (t.getRepostSpeed() < this.userConfig.getMinRtSpeed())
 				continue;
 			
+			//内容过滤
 			t = filter.filter(t);
+			
+			//转发速度达要求
 			if (t!=null && t.getRepostSpeed() >= this.userConfig.getMinRtSpeed()){
 				tops.put(t.getId(), t);
 			}
 
+			if (tops.size()>100){//最多保存100个
+				tops.pollFirstEntry();
+			}
 		}
 
 		log.fine("top : " + tops.size());
@@ -416,29 +444,70 @@ public class WeiboTops  implements java.io.Serializable {
     }
     
     
-    
+    /**
+     * 在原有顺序基础上再按照时间倒序处理
+     * @param tweets
+     * @return
+     */
+    private  Collection<Tweet> resortTweetsByTime(Collection<Tweet> tweets, String orderType) {
+    	if (tweets == null || tweets.isEmpty()) return tweets;
+    	
+    	Tweet first = tweets.iterator().next();
+    	Collection<Tweet> q1 = new ArrayList<Tweet>(tweets.size());
+    	Collection<Tweet> q2 = new ArrayList<Tweet>(tweets.size());
+    	
+		for (Tweet t : tweets) {
+			if (t == first)
+				continue;
+
+			if (t.getCreatedAt().after(first.getCreatedAt())
+				&& (/*!"byAcc".equals(orderType)
+					|| */(t.getRtAcceleration() != null && t.getRtAcceleration() > 0)
+					)
+				) {
+				q1.add(t);
+			} else {
+				q2.add(t);
+			}
+		}
+    	
+    	if (q1.size()>2){
+    		q1 = resortTweetsByTime(q1,orderType);
+    	}
+    	if (q2.size()>2){
+    		q2 = resortTweetsByTime(q2,orderType);
+    	}    	
+    	
+    	List<Tweet> ts = new ArrayList<Tweet>(tweets.size());
+    	ts.add(first);
+    	ts.addAll(q1);
+    	ts.addAll(q2);
+    	return ts;
+    }
 
     //排序
     private  Collection<Tweet> sortTweets(Map<Long, Tweet> tweets, String orderType) {
+    	
     	if ("bySpeed".equals(orderType)){
-    		TreeMap<Double, Tweet> tweets2 = new TreeMap<Double, Tweet>();
-    		for (Tweet t : tweets.values()){
-    			double speed = t.getRepostSpeed();
-    			/*
-    			if (t.getRtAcceleration()!=null){
-    				speed = speed + t.getRtAcceleration();
-    			}
-    			*/
-    			tweets2.put(speed, t);
-    		}
-    		return tweets2.descendingMap().values();
+			TreeSet<Tweet> tweets2 = new TreeSet<Tweet>(
+					new Comparator<Tweet>() {
+						public int compare(Tweet t1, Tweet t2) {
+							return Double.compare(t2.getRepostSpeed(),t1.getRepostSpeed());
+						}
+					});
+			tweets2.addAll(tweets.values());
+			return resortTweetsByTime(tweets2,orderType);
     	}else if ("byAcc".equals(orderType)){
-    		TreeMap<Double, Tweet> tweets2 = new TreeMap<Double, Tweet>();
-    		for (Tweet t : tweets.values()){
-    			double acc = t.getRtAcceleration()!=null?t.getRtAcceleration():0;
-    			tweets2.put(acc, t);
-    		}
-    		return tweets2.descendingMap().values();
+			TreeSet<Tweet> tweets2 = new TreeSet<Tweet>(
+					new Comparator<Tweet>() {
+						public int compare(Tweet t1, Tweet t2) {
+							double a2 = t2.getRtAcceleration()==null?0:t2.getRtAcceleration();
+							double a1 = t1.getRtAcceleration()==null?0:t1.getRtAcceleration();
+							return Double.compare(a2, a1);
+						}
+					});
+			tweets2.addAll(tweets.values());
+			return resortTweetsByTime(tweets2,orderType);
     	}else{
     		return tweets.values();
     	}
@@ -452,7 +521,7 @@ public class WeiboTops  implements java.io.Serializable {
 		
 		isRetweeted = ids.contains(id);
 		
-		log.finest(isRetweeted + ": " + id +" in " + ids.size());
+		//log.finest(isRetweeted + ": " + id +" in " + ids.size());
 
 		return isRetweeted;
 	}
@@ -474,23 +543,55 @@ public class WeiboTops  implements java.io.Serializable {
     	
     	//TODO String rtStr = this.userConfig.getRepostTmpl();
     	
-    	Tweet t = tweets.iterator().next();
-		if (!isRetweeted(t) ) {
+    	Tweet lastRTed = null;
+    	for (Tweet t : tweets){
+    		
+    		//已转发则跳过
+    		if (isRetweeted(t)){
+    			//记录最新转发
+    			if (lastRTed == null || t.getCreatedAt().after(lastRTed.getCreatedAt())){
+    				lastRTed = t;
+    			}
+    			continue;
+    		}
+    		
+    		//早于最新转发微博则跳过
+    		if (lastRTed !=null && t.getCreatedAt().before(lastRTed.getCreatedAt())){
+    			continue;
+    		}
+    		
+    		//加速低于0则跳过
+    		if (t.getRtAcceleration()==null || t.getRtAcceleration()<=0 ) {
+    			continue;
+    		}
+    		
+    		//转发微博
 			log.fine(" reposting: " + t);
-			
-			Status s = this.weibo
-					.repost(String.valueOf(t.getId()), null, 0);
-			
-			if (s!=null && s.getId() != null) {
-				this.userConfig.addRepostedId(t.getId());//更新已转发列表
-				if (t.getPrimaryTweet()!=null){
+
+			String repost = null;
+			// Tweet rt = t.getRetweet();
+			Tweet rt = t.getRetweetByFriend(this.userConfig.getFollowedIds());
+			if (rt != null) {
+				repost = "//@" + rt.getScreenName() + ":" + rt.getText();
+				if (repost.length() > 140) {
+					repost = repost.substring(0, 140);
+				}
+			}
+
+			Status s = this.weibo.repost(String.valueOf(t.getId()), repost, 0);
+
+			if (s != null && s.getId() != null) {
+				this.userConfig.addRepostedId(t.getId());// 更新已转发列表
+				if (t.getPrimaryTweet() != null) {
 					this.userConfig.addRepostedId(t.getPrimaryTweet().getId());
 				}
 				saveUserConfig(this.userConfig);
-				
+
 				return true;
+			}else{
+				return false;
 			}
-		}
+    	}
 		
 		return false;
     }
@@ -513,18 +614,15 @@ public class WeiboTops  implements java.io.Serializable {
 		
 		
 		if (!reposted) {
-			// 转发加速度第一
+			// 按速度倒序优先转发最新微博
+			reposted = repostFirst(sortTweets(tops, "bySpeed"));
+		}
+
+		if (!reposted) {
+			// 按加速度倒序优先转发最新微博
 			reposted = repostFirst(sortTweets(tops, "byAcc"));
 		}
 		
-		if (!reposted) {
-			// 转发速度第一
-			reposted = repostFirst(sortTweets(tops, "bySpeed"));
-		}
-		if (!reposted) {
-			// 转发最新
-			reposted = repostFirst(tops.values());
-		}
 		log.fine(" reposted:" + reposted);
 		return reposted;
     }

@@ -58,7 +58,7 @@ public class WeiboCache {
 	}
 	
 	
-	private static String getTweetKey(long id){
+	private static String genTweetKey(long id){
 		return Tweet.class.getName()+"#"+id;
 	}
 	
@@ -77,11 +77,11 @@ public class WeiboCache {
 	}
 	
 	public static void putTweet(Tweet t){
-		put(getTweetKey(t.getId()), t, t.getExpireTime());
+		put(genTweetKey(t.getId()), t, t.getExpireTime());
 	}
 	
 	public static Tweet getTweet(long id){
-		return (Tweet)get(getTweetKey(id));
+		return (Tweet)get(genTweetKey(id));
 	}
 	
 	
@@ -126,22 +126,29 @@ public class WeiboCache {
 
 	
 	public static boolean delTweet(long id){
-		String key = getTweetKey(id);
+		String key = genTweetKey(id);
 		Set<String> keys = new HashSet<String>(1);
 		keys.add(key);
 		delTweetKeys(keys);
-		return delete(getTweetKey(id));
+		return delete(genTweetKey(id));
 	}
 	
 	public static void putAllTweets(Map<Long,Tweet> tweets, String type){
 		if (tweets == null || tweets.size() == 0) return;
 		
 		Map<String, Tweet> map = new HashMap<String, Tweet> (tweets.size());
-		for (Tweet t : tweets.values()){ 
-			map.put(getTweetKey(t.getId()), t);
+		Set<String> keys = new HashSet<String>(tweets.size());
+		for (Tweet t : tweets.values()){
+			String key = genTweetKey(t.getId());
+			if (t.getExpireTime() != null){
+				putTweet(t); //缓存相应设超时
+			}else{
+				map.put(key, t);
+			}
+			keys.add(key);
 		}
-		putAll(map); //TODO 逐条expire未使用
-		putTweetKeys(map.keySet(), type);
+		putAll(map); 
+		putTweetKeys(keys, type);
 		log.finest(type + " put: "+tweets.size());
 	}
 
@@ -150,7 +157,7 @@ public class WeiboCache {
 		
 		Set<String> keys = new HashSet<String>(ids.size());
 		for (Long id : ids){ 
-			keys.add(getTweetKey(id));
+			keys.add(genTweetKey(id));
 		}
 		delTweetKeys(keys, type);
 		if (!"tops".equals(type)){
@@ -169,7 +176,7 @@ public class WeiboCache {
 
 	public static Map<Long,Tweet> getAllTweets(String type){
 		Map<Long,Tweet> tweets = new HashMap<Long,Tweet> ();
-		Set<String> keys = getTweetKeys(type);
+		Set<String> keys = getTweetKeys(type);//copy of keys
 		log.finest(type + " cached keys: "+keys.size());
 		
 

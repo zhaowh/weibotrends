@@ -506,11 +506,25 @@ public class Tweet  implements java.io.Serializable {
 	}
 	
 	public Tweet getRetweet(){
+		return getRetweetByFriend(null);
+	}
+	
+	public Tweet getRetweetByFriend(Set<String> friendIds){
+		Tweet rt = null;
 		if (!this.retweets.isEmpty()){
-			return retweets.iterator().next();
-		}else{
-			return null;
-		}
+			//rt = retweets.iterator().next();
+			int count = 0;
+			for (Tweet t: retweets){ //取转发次数最多的
+				if (t.getRepostsCount() >= count
+						&& (friendIds == null 
+						    || friendIds.size() == 0 
+						    || friendIds.contains(t.getUserId() + ""))) {
+					rt = t;
+					count = t.getRepostsCount();
+				}
+			}			
+		}		
+		return rt;
 	}
 	
 	public Map<String, Tweet> getUserRetweets(){
@@ -521,7 +535,18 @@ public class Tweet  implements java.io.Serializable {
 		return rts;
 	}
 	
-
+	public Map<String, Tweet> getFriendRetweets(Set<String> friendIds){
+		Map<String, Tweet> rts = new HashMap<String, Tweet> (this.retweets.size());
+		for (Tweet t: retweets){
+			if (friendIds == null 
+				    || friendIds.size() == 0 
+				    || friendIds.contains(t.getUserId() + "")){
+				    	rts.put(t.getScreenName(), t);
+				    }
+		}
+		return rts;
+	}
+	
 		
 
 	public String toString(){
