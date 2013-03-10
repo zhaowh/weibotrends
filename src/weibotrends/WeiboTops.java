@@ -449,7 +449,7 @@ public class WeiboTops  implements java.io.Serializable {
      * @param tweets
      * @return
      */
-    private  Collection<Tweet> resortTweetsByTime(Collection<Tweet> tweets, String orderType) {
+    private  Collection<Tweet> resortTweetsByTime(Collection<Tweet> tweets) {
     	if (tweets == null || tweets.isEmpty()) return tweets;
     	
     	Tweet first = tweets.iterator().next();
@@ -461,8 +461,7 @@ public class WeiboTops  implements java.io.Serializable {
 				continue;
 
 			if (t.getCreatedAt().after(first.getCreatedAt())
-				&& (/*!"byAcc".equals(orderType)
-					|| */(t.getRtAcceleration() != null && t.getRtAcceleration() > 0)
+				&& ((t.getRtAcceleration() != null && t.getRtAcceleration() > 0)
 					)
 				) {
 				q1.add(t);
@@ -472,10 +471,10 @@ public class WeiboTops  implements java.io.Serializable {
 		}
     	
     	if (q1.size()>2){
-    		q1 = resortTweetsByTime(q1,orderType);
+    		q1 = resortTweetsByTime(q1);
     	}
     	if (q2.size()>2){
-    		q2 = resortTweetsByTime(q2,orderType);
+    		q2 = resortTweetsByTime(q2);
     	}    	
     	
     	List<Tweet> ts = new ArrayList<Tweet>(tweets.size());
@@ -496,7 +495,7 @@ public class WeiboTops  implements java.io.Serializable {
 						}
 					});
 			tweets2.addAll(tweets.values());
-			return resortTweetsByTime(tweets2,orderType);
+			return resortTweetsByTime(tweets2);
     	}else if ("byAcc".equals(orderType)){
 			TreeSet<Tweet> tweets2 = new TreeSet<Tweet>(
 					new Comparator<Tweet>() {
@@ -507,7 +506,7 @@ public class WeiboTops  implements java.io.Serializable {
 						}
 					});
 			tweets2.addAll(tweets.values());
-			return resortTweetsByTime(tweets2,orderType);
+			return resortTweetsByTime(tweets2);
     	}else{
     		return tweets.values();
     	}
@@ -561,7 +560,7 @@ public class WeiboTops  implements java.io.Serializable {
     		}
     		
     		//加速低于0则跳过
-    		if (t.getRtAcceleration()==null || t.getRtAcceleration()<=0 ) {
+    		if (t.getRtAcceleration()!=null && t.getRtAcceleration()<=0 ) {
     			continue;
     		}
     		
@@ -612,15 +611,16 @@ public class WeiboTops  implements java.io.Serializable {
 			return false;
 		}
 		
-		
-		if (!reposted) {
-			// 按速度倒序优先转发最新微博
-			reposted = repostFirst(sortTweets(tops, "bySpeed"));
-		}
 
 		if (!reposted) {
 			// 按加速度倒序优先转发最新微博
 			reposted = repostFirst(sortTweets(tops, "byAcc"));
+		}
+		
+		
+		if (!reposted) {
+			// 按速度倒序优先转发最新微博
+			reposted = repostFirst(sortTweets(tops, "bySpeed"));
 		}
 		
 		log.fine(" reposted:" + reposted);
