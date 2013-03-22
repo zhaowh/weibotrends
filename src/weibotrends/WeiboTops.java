@@ -461,7 +461,7 @@ public class WeiboTops  implements java.io.Serializable {
 				continue;
 
 			if (t.getCreatedAt().after(first.getCreatedAt())
-				&& ((t.getRtAcceleration() != null && t.getRtAcceleration() > 0)
+				&& ((t.getRtAcceleration() == null || t.getRtAcceleration() > 0)
 					)
 				) {
 				q1.add(t);
@@ -572,9 +572,11 @@ public class WeiboTops  implements java.io.Serializable {
 			Tweet rt = t.getRetweetByFriend(this.userConfig.getFollowedIds());
 			if (rt != null) {
 				repost = "//@" + rt.getScreenName() + ":" + rt.getText();
-				if (repost.length() > 140) {
-					repost = repost.substring(0, 140);
-				}
+			}else if(t.getPrimaryTweet()!=null){
+				repost = "//@" + t.getScreenName() + ":" + t.getText();
+			}
+			if (repost != null && repost.length() > 140) {
+				repost = repost.substring(0, 140);
 			}
 
 			Status s = this.weibo.repost(String.valueOf(t.getId()), repost, 0);

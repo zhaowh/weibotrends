@@ -103,6 +103,7 @@ for (Tweet t : tweets){
 <%
  	while( i<4 && itr.hasNext()){
  		Tweet rt = itr.next();
+ 		if (rt.getScreenName().equals(user.getName())) continue;
 %>
 	<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank">
 		<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
