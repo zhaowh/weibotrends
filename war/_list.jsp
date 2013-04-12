@@ -64,6 +64,7 @@
 	<div class="feed-tit"> 
 		<div class="feed-filter">
 			排序：<a href="weibotops?m=list&order=byTime">时间</a>
+				  <a href="weibotops?m=list&order=byRt">转发数</a>
 				  <a href="weibotops?m=list&order=bySpeed">速度</a>
 				  <a href="weibotops?m=list&order=byAcc">加速度</a>
 		</div> 

@@ -32,17 +32,18 @@
 			<br>
 			最低转发速度：<input type=text name="min_rt_speed" size=6 value="<%=conf.getMinRtSpeed()%>" > （100=10000粉丝数1小时转发100次） 
 			<br><br>
-			<input type=checkbox name="verified_only" value="true" <% if (conf.isVerifiedOnly()) out.print("checked"); %> >仅搜索认证用户的微博
-			<br>
 			<input type=checkbox name="followed_only" value="true" <% if (conf.isFollowedOnly())  out.print("checked"); %> >仅搜索已关注用户原创或转发的微博 
 			<br><br>
+			<input type=checkbox name="verified_only" value="true" <% if (conf.isVerifiedOnly()) out.print("checked"); %> >仅搜索认证用户的微博
+			<br>
+
 			<b>屏蔽关键字</b>(以英文逗号分割)：<br>
 			<textarea name="excluded_words" cols=54 rows=14><%=conf.getExcludedWords()%></textarea>
 			<br><br>
 			<b>包含关键字</b>(以英文逗号分割，如输入则只有包含以下关键字的微博才能被搜索到)：<br>
 			<textarea name="included_words" cols=54 rows=6><%=conf.getIncludedWords()%></textarea>
 			<br>
-			<input type=checkbox name="followed_first" value="true" <% if (conf.isFollowedFirst()) out.print("checked");  %> >已关注用户原创微博优先（应用屏蔽关键字，不应用包含关键字）
+			<input type=checkbox name="followed_first" value="true" <% if (conf.isFollowedFirst()) out.print("checked");  %> >已关注用户不应用包含关键字筛选
 			<br>
 			<br>
 			

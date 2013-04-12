@@ -507,6 +507,17 @@ public class WeiboTops  implements java.io.Serializable {
 					});
 			tweets2.addAll(tweets.values());
 			return resortTweetsByTime(tweets2);
+    	}else if ("byRt".equals(orderType)){
+			TreeSet<Tweet> tweets2 = new TreeSet<Tweet>(
+					new Comparator<Tweet>() {
+						public int compare(Tweet t1, Tweet t2) {
+							double a2 = t2.getRepostsCount();
+							double a1 = t1.getRepostsCount();
+							return Double.compare(a2, a1);
+						}
+					});
+			tweets2.addAll(tweets.values());
+			return resortTweetsByTime(tweets2);
     	}else{
     		return tweets.values();
     	}
@@ -623,6 +634,12 @@ public class WeiboTops  implements java.io.Serializable {
 		if (!reposted) {
 			// 按速度倒序优先转发最新微博
 			reposted = repostFirst(sortTweets(tops, "bySpeed"));
+		}
+		
+		
+		if (!reposted) {
+			// 按转发数倒序优先转发最新微博
+			reposted = repostFirst(sortTweets(tops, "byRt"));
 		}
 		
 		log.fine(" reposted:" + reposted);
