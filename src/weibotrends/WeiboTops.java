@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
@@ -34,13 +35,15 @@ public class WeiboTops  implements java.io.Serializable {
 	
 	private static Logger log = Logger.getLogger(WeiboTops.class.getName());
 	
-	private static final int MIN_RT_COUNT=200;
-	private static final int MIN_RT_SPEED=20;
+	private static final int MIN_RT_COUNT = UserConfig.MIN_RT_COUNT;
+	private static final int MIN_RT_SPEED = UserConfig.MIN_RT_SPEED;
+	private static final int MAX_CACHE_HOUR = 2;
 	
 	private Weibo weibo;
 	private User user;
 	private UserConfig userConfig; 
-	
+	private WeiboFilter filter;
+
 
 	public WeiboTops(String authCode)  throws WeiboException{
 		this.weibo = new Weibo();
@@ -72,11 +75,11 @@ public class WeiboTops  implements java.io.Serializable {
 			this.userConfig.setAccessToken(accessToken);
 			dao.storeUserConfig(this.userConfig);
 		}
+		this.filter = new WeiboFilter(this.userConfig.getExcludedWords(), this.userConfig.getIncludedWords(), this.userConfig.getFollowedIds(), this.userConfig.isFollowedOnly(), this.userConfig.isFollowedFirst(), this.userConfig.isVerifiedOnly());
 	}
 	
 	private void reloadUserConfig(){
-		DAO dao = DAOFactory.getDAO();
-		this.userConfig = dao.fetchUserConfig(this.userConfig.getUserId());
+		initUserConfig(this.userConfig.getUserId(), null);
 	}
 		
 
@@ -145,7 +148,7 @@ public class WeiboTops  implements java.io.Serializable {
  		//log.finest(t.getScreenName() + " repost:" + t.getRepostsCount() + " comments:" + t.getCommentsCount() + " acceleration: " + t.getRtAcceleration());
 		//log.finest("speed:" + rtSpeed + " lastSpeed:" + lastRtSpeed + " acceleration: " + t.getRtAcceleration());
    		
-   		long expire = t.getCreatedAt().getTime()+this.userConfig.getMaxPostedHour() * 60 * 60 * 1000;
+   		long expire = t.getCreatedAt().getTime() + MAX_CACHE_HOUR * 60 * 60 * 1000;
    		if (t.getRepostSpeed() < this.userConfig.getMinRtSpeed()){
    			t.setExpireTime(new Date(expire));
    		}else{
@@ -182,7 +185,7 @@ public class WeiboTops  implements java.io.Serializable {
     	WeiboCache.putAllTweets(reseted, userConfig.getUserId()); //重新缓存
     	log.fine("reCached: " + reseted.size());
     	
-		long maxRefreshInterval = this.userConfig.getMaxPostedHour()*60*60*1000;
+		long maxRefreshInterval = MAX_CACHE_HOUR*60*60*1000;
 		int i=0;
     	for (Tweet t: tweets.values()){
     		if (!remove.contains(t.getId()) ){
@@ -222,7 +225,7 @@ public class WeiboTops  implements java.io.Serializable {
 				minCountInterval = (System.currentTimeMillis() - t.getCreatedAt().getTime())/10 ;
 			}
 			//最长发帖时间2小时时，最长刷新间隔30分钟
-			long maxRefreshInterval = this.userConfig.getMaxPostedHour() * 60*60*1000 /4;
+			long maxRefreshInterval = MAX_CACHE_HOUR * 60*60*1000 /4;
 			if (minCountInterval > maxRefreshInterval){ 
 				minCountInterval = maxRefreshInterval;
 			}
@@ -293,7 +296,6 @@ public class WeiboTops  implements java.io.Serializable {
 			if (t.getRepostSpeed() >= MIN_RT_SPEED && t.getRepostsCount() >= MIN_RT_COUNT) {
 				newTweets.put(t.getId(), t);
 			}
-			
 
 			if (t.getPrimaryTweet() != null
 					&& t.getPrimaryTweet().getCreatedAt() != null
@@ -407,7 +409,6 @@ public class WeiboTops  implements java.io.Serializable {
 		TreeMap<Long, Tweet> tops = new TreeMap<Long, Tweet>();
     	reloadUserConfig();//重新加载用户最新配置信息更新已转发贴
     	
-		WeiboFilter filter = new WeiboFilter(this.userConfig.getExcludedWords(), this.userConfig.getIncludedWords(), this.userConfig.getFollowedIds(), this.userConfig.isFollowedOnly(), this.userConfig.isFollowedFirst(), this.userConfig.isVerifiedOnly());
 
 		for (Tweet t : all.values()) {
 			if (t.getRepostsCount() < this.userConfig.getMinRtCount())
@@ -551,8 +552,6 @@ public class WeiboTops  implements java.io.Serializable {
     private boolean repostFirst(Collection<Tweet> tweets)throws WeiboException{
     	if (tweets==null || tweets.isEmpty()) return false;
     	
-    	//TODO String rtStr = this.userConfig.getRepostTmpl();
-    	
     	Tweet lastRTed = null;
     	for (Tweet t : tweets){
     		
@@ -577,14 +576,30 @@ public class WeiboTops  implements java.io.Serializable {
     		
     		//转发微博
 			log.fine(" reposting: " + t);
+			
+			//是否根据关键字查找到的微博
+			boolean isIncluded = filter.isIncluded(t.getText());
 
+			String rtStr = this.userConfig.getRepostTmpl();
 			String repost = null;
-			// Tweet rt = t.getRetweet();
-			Tweet rt = t.getRetweetByFriend(this.userConfig.getFollowedIds());
-			if (rt != null) {
-				repost = "//@" + rt.getScreenName() + ":" + rt.getText();
-			}else if(t.getPrimaryTweet()!=null){
-				repost = "//@" + t.getScreenName() + ":" + t.getText();
+			
+			if (isIncluded && rtStr!=null && rtStr.length()>0 ){
+				repost = rtStr;
+				
+				//复制#话题#
+				int i = t.getText().indexOf('#');
+				int j = t.getText().indexOf('#', i+1);
+				if (i>=0 && j>i){
+					repost = t.getText().substring(i, j+1) + " " + repost;
+				}
+			}else{
+				// Tweet rt = t.getRetweet();
+				Tweet rt = t.getRetweetByFriend(this.userConfig.getFollowedIds());
+				if (rt != null) {
+					repost = "//@" + rt.getScreenName() + ":" + rt.getText();
+				}else if(t.getPrimaryTweet()!=null){
+					repost = "//@" + t.getScreenName() + ":" + t.getText();
+				}
 			}
 			if (repost != null && repost.length() > 140) {
 				repost = repost.substring(0, 140);
@@ -598,6 +613,10 @@ public class WeiboTops  implements java.io.Serializable {
 					this.userConfig.addRepostedId(t.getPrimaryTweet().getId());
 				}
 				saveUserConfig(this.userConfig);
+				
+				if (isIncluded && this.userConfig.isAutoFollow()){
+					this.weibo.createFriendshipsByName(t.getScreenName());
+				}
 
 				return true;
 			}else{

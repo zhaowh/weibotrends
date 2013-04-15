@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-
+ 
 import weibo4j.http.AccessToken;
 import weibo4j.model.Paging;
 import weibo4j.model.PostParameter;
@@ -325,4 +325,23 @@ public class Weibo implements java.io.Serializable {
 		}
 	}
 	
+	/**
+	 * 关注一个用户
+	 * 
+	 * @param screen_name
+	 *            需要查询的用户screen_name 
+	 * @throws WeiboException
+	 *             when Weibo service or network is unavailable
+	 * @version weibo4j-V2 1.0.0
+	 * @see <a
+	 *      href="http://open.weibo.com/wiki/2/friendships/create">friendships/create</a>
+	 * @since JDK 1.5
+	 */
+	public Future<HTTPResponse>  createFriendshipsByName(String screen_name)
+			throws WeiboException {
+		return client.postAsync(
+				WeiboConfig.getValue("baseURL") + "friendships/create.json",
+				new PostParameter[] { new PostParameter("screen_name",
+						screen_name) });
+	}
 }

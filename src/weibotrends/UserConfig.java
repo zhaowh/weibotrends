@@ -17,6 +17,9 @@ public class UserConfig  implements java.io.Serializable {
 	private static final long serialVersionUID = -2957940235844909461L;
 
 	private static Logger log = Logger.getLogger(UserConfig.class.getName());
+
+	public static final int MIN_RT_COUNT=100;
+	public static final int MIN_RT_SPEED=10;
 	
 	@PrimaryKey
 	@Persistent 
@@ -65,6 +68,9 @@ public class UserConfig  implements java.io.Serializable {
 	private boolean disabled = true;
 	
 	@Persistent 
+	private Boolean autoFollow = false;
+	
+	@Persistent 
 	private Date lastRtTime = new Date(System.currentTimeMillis());
 	
 
@@ -74,7 +80,7 @@ public class UserConfig  implements java.io.Serializable {
 	@Persistent 
 	private Set<String> followedIds = new HashSet<String>();
 	
-		
+	
 	public UserConfig(){
 
 	}
@@ -110,12 +116,14 @@ public class UserConfig  implements java.io.Serializable {
 		return minRtCount;
 	}
 	public void setMinRtCount(int minRtCount) {
+		if(minRtCount>MIN_RT_COUNT) minRtCount=MIN_RT_COUNT;
 		this.minRtCount = minRtCount;
 	}
 	public int getMinRtSpeed() {
 		return minRtSpeed;
 	}
 	public void setMinRtSpeed(int minRtSpeed) {
+		if (minRtSpeed>MIN_RT_SPEED) minRtSpeed=MIN_RT_SPEED;
 		this.minRtSpeed = minRtSpeed;
 	}
 	public int getMaxPostedHour() {
@@ -220,6 +228,14 @@ public class UserConfig  implements java.io.Serializable {
 
 	public Set<String> getFollowedIds() {
 		return followedIds;
+	}
+
+	public void setAutoFollow(boolean autoFollow) {
+		this.autoFollow = autoFollow;
+	}
+
+	public boolean isAutoFollow() {
+		return autoFollow==null?false:autoFollow;
 	}
 
 	

@@ -155,7 +155,7 @@ public class WeiboTopsServlet extends HttpServlet {
 		conf.setExcludedWords(get(req,"excluded_words",conf.getExcludedWords()));
 		conf.setIncludedWords(get(req,"included_words",conf.getIncludedWords()));
 		conf.setFollowedFirst(getBool(req,"followed_first",conf.isFollowedFirst()));
-		
+		conf.setAutoFollow(getBool(req, "auto_follow", conf.isAutoFollow()));
 		wt.saveUserConfig(conf);
 		
 

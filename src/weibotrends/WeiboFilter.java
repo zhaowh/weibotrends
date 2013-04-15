@@ -45,7 +45,7 @@ public class WeiboFilter  {
 
 	}
 	
-	private boolean isIncluded(String text){
+	public boolean isIncluded(String text){
     	if (text == null) return false;
     	if (includedWords == null || includedWords.length==0) return true;
 
@@ -60,7 +60,7 @@ public class WeiboFilter  {
     	return false;
     }
     
-    private boolean isExcluded(String text){
+	public boolean isExcluded(String text){
     	if (text == null) return false;
     	if (excludedWords == null || excludedWords.length==0) return false;
 
@@ -75,13 +75,13 @@ public class WeiboFilter  {
     	return false;
     }
     
-    private boolean isFollowedUser(String uid){
+	public boolean isFollowedUser(String uid){
     	if (uid == null) return false;
     	if (this.followedIds == null || this.followedIds.size()==0) return false;
     	return (this.followedIds.contains(uid));
     }
     
-    private boolean checkFollowedOnly(Tweet tweet){
+	public boolean checkFollowedOnly(Tweet tweet){
     	if (!this.isFollowedOnly) return true;
     	if ( isFollowedUser(tweet.getUserId()+""))
     		return true;
@@ -98,7 +98,7 @@ public class WeiboFilter  {
     }
     
  
-    private boolean checkExcluded(Tweet tweet){
+    public boolean checkExcluded(Tweet tweet){
     	if (	isExcluded(tweet.getScreenName()) ||
     			isExcluded(tweet.getText()) ||
     			isExcluded(tweet.getUserDescription()) ||
@@ -108,7 +108,7 @@ public class WeiboFilter  {
     	return true;
     }
     
-    private boolean checkIncluded(Tweet tweet){
+    public boolean checkIncluded(Tweet tweet){
     	if (this.isFollowedFirst){ //优先用户原创微博不应用包含关键字
     		if (tweet.getPrimaryTweet()==null 
     				&& isFollowedUser(tweet.getUserId()+"")) return true;
@@ -123,7 +123,7 @@ public class WeiboFilter  {
     	return false;
     }
         
-    private boolean checkVerfied(Tweet tweet){
+    public boolean checkVerfied(Tweet tweet){
     	if (!this.isVerifiedOnly) return true;
     	if (tweet.isVerified()) return true;
     	if (tweet.getPrimaryTweet()!=null 

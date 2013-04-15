@@ -185,18 +185,17 @@ public class HttpClientAsync implements java.io.Serializable {
 		String postParams = PostParameter.encodeParameters(params);
 		req.setPayload(postParams.getBytes());
 		
-		if (withTokenHeader) {
-			return fetchAsync(req);
-		} else {
-			return fetchAsync(req, withTokenHeader);
-		}
+		return fetchAsync(req, withTokenHeader);
+
 	}
 
 	public Response post(String url, PostParameter[] params,
 			Boolean withTokenHeader) throws WeiboException {
 		return getResponse(postAsync(url, params, withTokenHeader));
 	}
-
+	public Response post(String url, PostParameter[] params) throws WeiboException {
+		return getResponse(postAsync(url, params, true));
+	}
 	public Future<HTTPResponse> fetchAsync(HTTPRequest  req) throws WeiboException {
 		return fetchAsync(req, true);
 	}
