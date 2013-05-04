@@ -15,12 +15,12 @@
 	public String formatText(Tweet t){
 		String text = "<a href='http://www.weibo.com/"+t.getUserId()+"'>@" + t.getScreenName() + "</a>: " + t.getText();
 		if (t.getBmiddlePic()!=null && t.getBmiddlePic().trim().length()>0){
-			text = text + "<br><img src='"+t.getBmiddlePic()+"'></img>";
+			text = text + "<br><a href='"+t.getOriginalPic()+"'><img border=0 src='"+t.getBmiddlePic()+"'></img></a>";
 		}
 		if (t.getPrimaryTweet()!=null){
 			text = text + "\n<hr><a href='http://www.weibo.com/"+t.getPrimaryTweet().getUserId()+"'>@" + t.getPrimaryTweet().getScreenName() + "</a>: " + t.getPrimaryTweet().getText();
 			if (t.getPrimaryTweet().getBmiddlePic()!=null && t.getPrimaryTweet().getBmiddlePic().trim().length()>0){
-				text = text + "<br><img src='"+t.getPrimaryTweet().getBmiddlePic()+"'></img>";
+				text = text + "<br><a href='"+t.getPrimaryTweet().getOriginalPic()+"'><img  border=0 src='"+t.getPrimaryTweet().getBmiddlePic()+"'></img></a>";
 			}
 		}
 		return text;
@@ -74,6 +74,7 @@ for (Tweet t : tweets){
 			<author><%=t.getScreenName() %></author>
 			<guid isPermaLink="true">http://weibo.com/<%=t.getUserId()%>/<%=formatMid(t.getMid())%></guid>
 			<comments>http://weibo.com/<%=t.getUserId()%>/<%=formatMid(t.getMid())%></comments>
+			<link>http://weibo.com/<%=t.getUserId()%>/<%=formatMid(t.getMid())%></link>
 		</item>
 <%
 }
