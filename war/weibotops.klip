@@ -1,0 +1,177 @@
+<!--  COPYRIGHT AND TRADEMARK NOTICE
+
+The Klip File Format is copyright 2001-2003, Serence Inc.
+Klip and associated marks are trademarks of Serence Inc.
+All rights reserved.
+
+http://www.serence.com/site.php?action=ser_legal,legal_tmip
+
+Please note that information you enter here will be available to the public
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+When you're done writing your Klip, feel free to remove these comments to
+reduce the size of the file you distribute to your users.
+
+And don't forget to rename your .klip file from "template.klip" to something
+more descriptive.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+-->
+
+<klip>
+	
+	<owner>
+
+		<author>
+			weitixing.com
+		</author>
+
+		<copyright>
+			<!--
+			your copyright notice
+			-->
+			Copyright 2013 weitixing.com
+		</copyright>
+
+		<email>
+			
+		</email>
+
+		<web>
+			http://www.weitixing.com
+		</web>
+
+	</owner>
+
+	<identity>
+		
+		<title>
+			Hot Weibos
+		</title>
+		
+		<uniqueid>
+			weitixing.com/weibotops
+		</uniqueid>
+		
+		<version>
+			1.0
+		</version>
+		
+		<lastmodified>
+			2013.05.04:2222
+		</lastmodified>
+
+		<description>
+			The latest hot weibos from Sina Weibo.
+		</description>
+
+		<keywords>
+			hot weibo tops weibotops
+		</keywords>
+
+	</identity>
+	
+	<locations>
+
+		<defaultlink>
+			<!--
+			a url pointing to a page relevant to this Klip
+			when a user clicks on your Klip (except on an item) they are
+			directed here
+			-->
+			http://www.weitixing.com
+		</defaultlink>
+
+		<contentsource>
+			<!--
+			a url pointing to the KlipFood this Klip uses to find new data
+			-->
+			http://www.weitixing.com/weibotops?m=rss
+		</contentsource>
+
+		<icon>
+			<!--
+			a url pointing to this Klip's default 16x16 gif or jpeg icon
+			-->
+			http://www.weitixing.com/logo32.gif
+		</icon>
+
+		<banner>
+			<!--
+			a url pointing to this Klip's 234x60 gif or jpeg banner 
+			-->
+		</banner>
+
+		<help>
+			<!--
+			a url pointing to online help specific to this Klip
+			-->
+		</help>
+
+		<kliplocation>
+			<!--
+			a url where new versions of this Klip can be found.
+			KlipFolio periodically checks for updates to your Klip at this url
+			-->
+			http://www.weitixing.com/weibotops.klip
+		</kliplocation>	
+
+	</locations>
+	
+	<setup>
+
+		<refresh>
+			<!--
+			how often, in minutes, this Klip should check for new KlipFood
+			-->
+			10
+		</refresh>
+
+		<referer>
+			<!--
+			if required, specify text here to help you track your Klip's usage
+			this text is sent as an HTTP referer (see RFC 1945 for details)
+			-->
+		</referer>
+
+		<country>
+			<!--
+			the two character ISO country code which identifies where your
+			Klip comes from.  See the dev guide for a list of codes
+			-->
+			CN
+		</country>
+
+		<language>
+			<!--
+			the two character ISO language code which identifies what language
+			your Klip uses.  See the dev guide for a list of codes
+			-->
+			ZH
+		</language>
+
+		<codepage>
+			<!--
+			only required if you need to override the default codepage
+			used by your language choice
+			-->
+            65001
+		</codepage>
+
+	</setup>
+
+	<!-- Messages Section
+	Include this section in your Klip to show a different message while your
+	Klip loads or has no data to display -->
+	
+	<messages>
+		<loading>
+			Getting data...
+		</loading>
+		<nodata>
+			No items to display.
+		</nodata>
+	</messages>
+
+
+</klip>

@@ -4,10 +4,6 @@
 <%@ page import="weibo4j.model.WeiboException" %>
 <%
 Oauth oauth = new Oauth();
-if (session.getAttribute("autoLoginForward")==null){
-	response.sendRedirect(oauth.authorize("code"));
-	session.setAttribute("autoLoginForward","true");
-}
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>

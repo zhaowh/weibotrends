@@ -13,9 +13,11 @@
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <meta name="viewport" content="width=device-width" />
+
 <title>微博趋势 - 最新热点</title> 
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="alternate" type="application/rss+xml" title="RSS"href="/weibotops?m=rss" />
  
 <link href="/css/base.css" rel="stylesheet" type="text/css" /> 
 <link href="/css/skin_default/skin.css" rel="stylesheet" type="text/css" /> 
@@ -51,8 +53,18 @@
 							</form>
 
 							<span class="user-link"> 
+							<%
+							if (user!=null){
+							%>
 								<a  href="http://weibo.com/<%=user.getId()%>" target="_blank"><%=user.getName()%></a> 
-								| <a href="http://weibo.com/logout.php">退出</a> 
+								| <a href="/weibotops?m=logout">退出</a> 
+							<%
+							}else{
+							%>
+							<a href="/weibotops?m=login">登录</a> 
+							<%
+							}
+							%>
 							</span> 
 						</div> 
 					</div> 
@@ -68,9 +80,19 @@
 					<div class="menu"> 
 						<ul> 
 							<li><a hideFocus="true" class="menu-pub" href="http://weibo.com/pub/?source=toptray" target="_blank">微博广场</a></li> 
-							<li><a hideFocus="true" class="menu-user" href="http://weibo.com/" target="_blank">我的首页</a></li> 
+							<li><a hideFocus="true" class="menu-user" href="http://weibo.com/" target="_blank">微博首页</a></li> 
 							<li><a hideFocus="true" class="menu-home" href="/weibotops?m=list">最新热推</a></li> 
+							<%
+							if(user!=null){
+							%>
 							<li><a hideFocus="true" class="menu-weibo" href="http://weibo.com/<%=user.getId()%>/profile" target="_blank">我的微博</a></li> 
+							<%
+							}else{
+							%>
+							<li><a hideFocus="true" class="menu-weibo" href="/weibotops?m=login" >微博登录</a></li> 
+							<%
+							}
+							%>
 						</ul> 
 						<div class="menu-bg skin-bg"></div> 
 						<div class="menu-arrow skin-bg"></div> 
@@ -81,6 +103,9 @@
 			
 			<div id="container"> 
 				<div class="sidebar"> 
+				<%
+					if (user!=null){
+				%>
 					<div class="user-preview"> 
 						<div class="user-info"> 
 							<a class="user-pic" href="http://weibo.com/<%=user.getId()%>" target="_blank">
@@ -92,6 +117,9 @@
 						</div> 
 						<p><%=user.getDescription()%></p> 
 					</div>  
+				<%
+					}
+				%>
   					<div class="user-sidebar"> 
 						<div class="sidebar-head">敬请关注</div> 
 						<ul> 
@@ -101,9 +129,14 @@
 								<p><a href="http://weibo.com/1862386965" target="_blank">微博趋势</a></p> 
 								<!-- a class="sub-link" rel="e:fl,u:1862386965,t:2" href="#">关注他</a  --> 
 							</li> 
-						</ul> 
-						
-						<p><img src="/mobile-friendly.jpg" width="148" height="105" alt="Mobile friendly." title="本网站使用移动终端也能正常浏览"></img></p>
+						</ul>
+						<p>
+							<img src="/mobile-friendly.jpg" width="148" height="105" alt="Mobile friendly." title="本网站使用移动终端也能正常浏览"></img>
+						</p>
+						<p>&nbsp;</p>
+						<p>
+							<a href="/weibotops?m=rss"><img src="/rss_button.gif" border="0"></img></a>
+						</p>
 					</div> 
 				</div> 
 				

@@ -68,8 +68,14 @@
 				  <a href="weibotops?m=list&order=bySpeed">速度</a>
 				  <a href="weibotops?m=list&order=byAcc">加速度</a>
 		</div> 
+		<%
+			if (user!=null && wt!=null){
+		%>
 		<div class="feed-filter"> <a href="weibotops?m=config">设置</a></div> 
 		<div class="feed-filter"> <a href="weibotops?m=refresh">刷新</a></div> 
+		<%
+			}
+		%>
 		<h3>最新热推</h3> 
 	</div> 
 
@@ -93,7 +99,7 @@ for (Tweet t : tweets){
 <%
 	Map<String, Tweet> rts 
 	= 
-		wt.getUserConfig().isFollowedOnly()?
+		(wt!=null && wt.getUserConfig().isFollowedOnly())?
 		t.getFriendRetweets(wt.getUserConfig().getFollowedIds()):
 		t.getUserRetweets()
 		;
@@ -104,7 +110,7 @@ for (Tweet t : tweets){
 <%
  	while( i<4 && itr.hasNext()){
  		Tweet rt = itr.next();
- 		if (rt.getScreenName().equals(user.getName())) continue;
+ 		if (user!=null && rt.getScreenName().equals(user.getName())) continue;
 %>
 	<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank">
 		<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
@@ -128,11 +134,11 @@ for (Tweet t : tweets){
 				<p><a href="http://weibo.com/<%=t.getPrimaryTweet().getUserId()%>" target="_blank">@<%=t.getPrimaryTweet().getScreenName()%><%=formatVerfied(t.isVerified()) %></a>：<%=formatText(t.getPrimaryTweet().getText())%>
 				</p> 
 <%
-		if (t.getPrimaryTweet().getThumbnailPic() != null){
+		if (t.getPrimaryTweet().getBmiddlePic() != null){
 %>
 				<div class="preview-img">
 					<div class="feed-img">
-						<img class="zoom-move" src="<%=t.getPrimaryTweet().getThumbnailPic() %>" rel="e:zi,fw:0"/>
+						<img class="zoom-move" src="<%=t.getPrimaryTweet().getBmiddlePic() %>" rel="e:zi,fw:0"/>
 					</div>
 				</div>
 <%
@@ -145,11 +151,11 @@ for (Tweet t : tweets){
 		
 <%
 	}
-	if (t.getThumbnailPic()!=null && t.getThumbnailPic().length()>0){
+	if (t.getThumbnailPic()!=null && t.getBmiddlePic().length()>0){
 %>
 		<div class="preview-img">
 			<div class="feed-img">
-				<img class="zoom-move" src="<%=t.getThumbnailPic()%>" rel="e:zi,fw:0"/>
+				<img class="zoom-move" src="<%=t.getBmiddlePic()%>" rel="e:zi,fw:0"/>
 			</div>
 		</div>
 <%
@@ -159,7 +165,7 @@ for (Tweet t : tweets){
 
 		<div class="feed-info"><p>
 <%
-	if (wt.isRetweeted(t)){
+	if (wt!=null && wt.isRetweeted(t)){
 %>
 	 已转发(<%=t.getRepostsCount()%>)
 <%
@@ -236,7 +242,7 @@ Xwb.cfg={	basePath :	'/action.php',
  
 			webName:	'微博趋势',
  
-			uid: 		'<%=user.getId()%>', 
+			uid: 		'<%=user!=null?user.getId():""%>', 
  
 			siteUid:	'',
  
