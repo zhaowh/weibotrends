@@ -55,15 +55,21 @@
 <%
 	boolean fwdEnabled = Boolean.valueOf(request.getParameter("fwd"));
 	if (!conf.isDisabled()) fwdEnabled = true;
-	if (fwdEnabled){
+	
 %>
 			<script type="text/javascript" >
 			function toggleAutoRTConfig(){
-					if($("#auto_rt_config_check").attr("checked")==false){
+					if (!<%=fwdEnabled%>){
+						alert("自动转发功能已禁用");
+						$("#auto_rt_disable_check").attr("checked",false);
+						$("#auto_rt_config_div").hide();
+					}
+					if($("#auto_rt_disable_check").attr("checked")==false){
 						if (confirm("启用自动转发后系统会定时搜索最新热门微博，并自动转发至你的微博，是否继续？")){
 							$("#auto_rt_config_div").show();
 						}else{
-							$("#auto_rt_config_check").attr("checked",false);
+							$("#auto_rt_disable_check").attr("checked",false);
+							$("#auto_rt_config_div").hide();
 						}
 					}else{
 						$("#auto_rt_config_div").hide();
@@ -72,7 +78,7 @@
 			}
 			</script>		
 			
-			<input  id="auto_rt_config_check"  type=checkbox name="disabled" value="true" <% if (conf.isDisabled()) out.print("checked"); %> onclick="toggleAutoRTConfig()" >
+			<input  id="auto_rt_disable_check"  type=checkbox name="disabled" value="true" <% if (conf.isDisabled()) out.print("checked"); %> onclick="toggleAutoRTConfig()" >
 			<font color="red">禁用自动转发</font>
 			<br>
 			<div id="auto_rt_config_div" <% if (conf.isDisabled()) out.print(" style=\"display:none\" "); %>  >
@@ -93,7 +99,7 @@
 				
 			</div>
 <%
-	}
+	
 %>
 			<br><input type=submit name="save" value=" 保存配置 ">
 		  </p> 

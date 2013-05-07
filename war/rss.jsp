@@ -2,12 +2,10 @@
 <%@ page import="java.io.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="weibo4j.model.User" %>
 <%@ page import="weibotrends.Tweet" %>
 <%@ page import="weibotrends.WeiboTops" %>
 <%@ page import="weibotrends.WeiboUtils" %>
 <%
-	User user = (User)session.getAttribute("user");
 	WeiboTops wt = (WeiboTops)request.getAttribute("weiboTops");
 	Collection<Tweet> tweets = (Collection<Tweet>)request.getAttribute("tweets");
 %>
@@ -15,12 +13,12 @@
 	public String formatText(Tweet t){
 		String text = "<a href='http://www.weibo.com/"+t.getUserId()+"'>@" + t.getScreenName() + "</a>: " + t.getText();
 		if (t.getBmiddlePic()!=null && t.getBmiddlePic().trim().length()>0){
-			text = text + "<br><a href='"+t.getOriginalPic()+"'><img border=0 src='"+t.getBmiddlePic()+"'></img></a>";
+			text = text + "\n<br><a href='"+t.getOriginalPic()+"'><img border=0 src='"+t.getBmiddlePic()+"'></img></a>";
 		}
 		if (t.getPrimaryTweet()!=null){
-			text = text + "\n<hr><a href='http://www.weibo.com/"+t.getPrimaryTweet().getUserId()+"'>@" + t.getPrimaryTweet().getScreenName() + "</a>: " + t.getPrimaryTweet().getText();
+			text = text + "\n<hr><a href='http://www.weibo.com/"+t.getPrimaryTweet().getUserId()+"'>@" + t.getPrimaryTweet().getScreenName() + "</a>: \n<br>" + t.getPrimaryTweet().getText();
 			if (t.getPrimaryTweet().getBmiddlePic()!=null && t.getPrimaryTweet().getBmiddlePic().trim().length()>0){
-				text = text + "<br><a href='"+t.getPrimaryTweet().getOriginalPic()+"'><img  border=0 src='"+t.getPrimaryTweet().getBmiddlePic()+"'></img></a>";
+				text = text + "\n<br><a href='"+t.getPrimaryTweet().getOriginalPic()+"'><img  border=0 src='"+t.getPrimaryTweet().getBmiddlePic()+"'></img></a>";
 			}
 		}
 		return text;
@@ -40,7 +38,14 @@
 %>
 <rss version="2.0">
 	<channel>
-		<title>Hot Weibos</title>
+		<title>Hot Weibos
+		<%
+			if (wt!=null && wt.getUserConfig().getAccessToken()!=null){
+				out.println(" - " + wt.getUserConfig().getName());
+			}
+		%>
+		
+		</title>
 		<link>http://www.weitixing.com/</link>
 		<description>The lastest hot weibos from Sina Weibo.</description>
 		<language>cn-zh</language>

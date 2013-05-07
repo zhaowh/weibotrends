@@ -35,7 +35,7 @@
 	}
 	
 	public String formatVerfied(boolean isVerfied){
-		String s = "<img src='var/data/logo/default_v2.png' border=0 alt='V' title='新浪认证'>";
+		String s = "<img src='var/data/logo/default_v2.png' border='0' width='11px' height='10px' alt='V' title='新浪认证'>";
 		return isVerfied?s:"";
 	}
 	
@@ -59,6 +59,25 @@
 
 %>
 
+<script language="javascript">
+	function toggleImg(id){
+		/*
+		$(obj).closest(".feed-content").find(".show-img").toggle();
+		$(obj).closest(".feed-content").find(".preview-img").toggle();
+
+		isFwd = false;
+		if ($(obj).closest(".forward").length>0) isFwd = true;
+		if (!isFwd){
+			$(obj).closest(".feed-content").find(".box-style").toggle();
+		}
+		*/
+
+		preview = document.getElementById("preview-img-"+id);
+		preview.style.display = preview.style.display == "none"?"block":"none";
+		showimg = document.getElementById("show-img-"+id);
+		showimg.style.display = showimg.style.display == "none"?"block":"none";
+	}
+</script>
 
 <div class="feed-list" id="xwb_weibo_list"> 
 	<div class="feed-tit"> 
@@ -86,45 +105,51 @@
 for (Tweet t : tweets){
 %>
 
-<li rel="w:<%=t.getId()%>">	<div class="user-pic"> 
-	<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank">
-		<img width="50" height="50" src="<%=t.getProfileImageUrl()%>" alt="<%=t.getScreenName()%>" title="<%=t.getScreenName()%>" />
-	</a> 
+<li rel="w:<%=t.getId()%>">
+	<div class="user-pic"> 
+		<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank">
+			<img width="50" height="50" src="<%=t.getProfileImageUrl()%>" alt="<%=t.getScreenName()%>" title="<%=t.getScreenName()%>" />
+		</a> 
 	</div> 
 	<div class="feed-content"> 
-		<p class="feed-main"> 
-<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank" title="<%=t.getScreenName()%>">
-	<%=t.getScreenName()%><%=formatVerfied(t.isVerified()) %>
-</a>：<%=formatText(t.getText())%>
-<%
-	Map<String, Tweet> rts 
-	= 
-		(wt!=null && wt.getUserConfig().isFollowedOnly())?
-		t.getFriendRetweets(wt.getUserConfig().getFollowedIds()):
-		t.getUserRetweets()
-		;
-	if (rts!=null && !rts.isEmpty()){
-		Iterator<Tweet> itr = rts.values().iterator();
-		int i = 0;
-%><div class="blur-txt"> 由
-<%
- 	while( i<4 && itr.hasNext()){
- 		Tweet rt = itr.next();
- 		if (user!=null && rt.getScreenName().equals(user.getName())) continue;
-%>
-	<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank">
-		<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
-	</a>
-<%
-	i++;
-	}
-	if (i>=4 && itr.hasNext()) out.print("等");
-%>转推
-	</div>
-<%
-	}
- %>
-		</p> 
+		<div class="feed-main"> 
+			<div class="user-pic user-pic-inner"> 
+				<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank">
+					<img width="50" height="50" src="<%=t.getProfileImageUrl()%>" alt="<%=t.getScreenName()%>" title="<%=t.getScreenName()%>" />
+				</a> 
+			</div> 
+			<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank" title="<%=t.getScreenName()%>">
+				<%=t.getScreenName()%><%=formatVerfied(t.isVerified()) %>
+			</a>：<%=formatText(t.getText())%>
+			<%
+				Map<String, Tweet> rts 
+				= 
+					(wt!=null && wt.getUserConfig().isFollowedOnly())?
+					t.getFriendRetweets(wt.getUserConfig().getFollowedIds()):
+					t.getUserRetweets()
+					;
+				if (rts!=null && !rts.isEmpty()){
+					Iterator<Tweet> itr = rts.values().iterator();
+					int i = 0;
+			%><div class="blur-txt"> 由
+			<%
+			 	while( i<4 && itr.hasNext()){
+			 		Tweet rt = itr.next();
+			 		if (user!=null && rt.getScreenName().equals(user.getName())) continue;
+			%>
+				<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank">
+					<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
+				</a>
+			<%
+				i++;
+				}
+				if (i>=4 && itr.hasNext()) out.print("等");
+			%>转推
+				</div>
+			<%
+				}
+			 %>
+		</div> 
 <%
 	if (t.getPrimaryTweet()!=null){
 %>		
@@ -134,11 +159,24 @@ for (Tweet t : tweets){
 				<p><a href="http://weibo.com/<%=t.getPrimaryTweet().getUserId()%>" target="_blank">@<%=t.getPrimaryTweet().getScreenName()%><%=formatVerfied(t.isVerified()) %></a>：<%=formatText(t.getPrimaryTweet().getText())%>
 				</p> 
 <%
-		if (t.getPrimaryTweet().getBmiddlePic() != null){
+		if (t.getPrimaryTweet().getThumbnailPic() != null && t.getPrimaryTweet().getThumbnailPic().trim().length()>0){
 %>
-				<div class="preview-img">
+				<div class="preview-img" id="preview-img-<%=t.getPrimaryTweet().getId()%>">
 					<div class="feed-img">
-						<img class="zoom-move" src="<%=t.getPrimaryTweet().getBmiddlePic() %>" rel="e:zi,fw:0"/>
+						<img class="zoom-move" src="<%=t.getPrimaryTweet().getThumbnailPic() %>" rel="e:zi,fw:0" onclick='toggleImg(<%=t.getPrimaryTweet().getId()%>)'/>
+					</div>
+				</div>
+				<div class="show-img cutline" style="display:none"  id="show-img-<%=t.getPrimaryTweet().getId()%>">
+					<p>
+						<a class="icon-piup icon-bg" rel="e:zo" href="#"  onclick='toggleImg(<%=t.getPrimaryTweet().getId()%>);return false;'>收起</a>
+						<a class="icon-src icon-bg" target="_blank" href="<%=t.getPrimaryTweet().getOriginalPic() %>">查看原图</a>
+						<!-- 
+						<a rel="e:tl" class="icon-trunleft icon-bg" href="#">向左转</a>
+						<a rel="e:tr" class="icon-trunright icon-bg" href="#">向右转</a>
+						 -->
+					</p>
+					<div name="img">
+						<img class="narrow-move" src="<%=t.getPrimaryTweet().getBmiddlePic() %>" rel="e:zo"  onclick='toggleImg(<%=t.getPrimaryTweet().getId()%>)'/>
 					</div>
 				</div>
 <%
@@ -151,13 +189,35 @@ for (Tweet t : tweets){
 		
 <%
 	}
-	if (t.getThumbnailPic()!=null && t.getBmiddlePic().length()>0){
+	if (t.getThumbnailPic()!=null && t.getThumbnailPic().trim().length()>0){
 %>
-		<div class="preview-img">
-			<div class="feed-img">
-				<img class="zoom-move" src="<%=t.getBmiddlePic()%>" rel="e:zi,fw:0"/>
+		 
+				<div class="preview-img" id="preview-img-<%=t.getId()%>">
+					<div class="feed-img">
+						<img class="zoom-move" src="<%=t.getThumbnailPic()%>" rel="e:zi,fw:0"  onclick='toggleImg(<%=t.getId()%>)'/>
+					</div>
+				</div> 
+		<div class="box-style"  style="display:none" id="show-img-<%=t.getId()%>"> 
+			<div class="box-t skin-bg"><span class="skin-bg"></span></div> 
+			<div class="box-content"> 
+				<div class="show-img cutline" >
+					<p>
+						<a class="icon-piup icon-bg" rel="e:zo" href="#"  onclick='toggleImg(<%=t.getId()%>);return false;'>收起</a>
+						<a class="icon-src icon-bg" target="_blank" href="<%=t.getOriginalPic() %>">查看原图</a>
+						<!-- 
+						<a rel="e:tl" class="icon-trunleft icon-bg" href="#">向左转</a>
+						<a rel="e:tr" class="icon-trunright icon-bg" href="#">向右转</a>
+						 -->
+					</p>
+					<div name="img">
+						<img class="narrow-move" src="<%=t.getBmiddlePic() %>" rel="e:zo"  onclick='toggleImg(<%=t.getId()%>)'/>
+					</div>
+				</div>
 			</div>
-		</div>
+			<div class="box-b skin-bg"><span class="skin-bg"></span></div> 
+			<span class="box-arrow skin-bg"></span> 
+
+		</div> 
 <%
 	}
 %>
@@ -196,69 +256,7 @@ for (Tweet t : tweets){
 
 </ul> 
 
-<% 
-/*
-function json_weibo(t.){
-			$xwb = array();
-			$xwb['cr'] = t.getCreatedAt();
-			$xwb['s'] = t.getSource();
-			$xwb['tx'] = t.getText();
-			$xwb['tp'] = t.getThumbnailPic();
-			$xwb['mp'] = t.getBmiddlePic();
-			$xwb['op'] = t.getOriginalPic();
-			$xwb['u']getId() = t.getUserId();
-			$xwb['u']['sn'] = t.getScreenName();
-			$xwb['u']['p'] = t.getProfileImageUrl();
-			return json_encode($xwb);
-}
-function json_weibo_list(t.weets){
-	$s = '{';
-	foreach(t.weets as t.){ 
-			$s = $s.'"'.t.getId().'":'.json_weibo(t.).',';
-			if (t.getPrimaryTweet().){
-				$s = $s.'"'.t.getPrimaryTweet().getId().'":'.json_weibo(t.getPrimaryTweet().).',';
-			}
-	}
-	$s = $s.'"v":0}';
-	return $s;
-}
-*/
-%>
 
-<script type='text/javascript'> 
-
-if(!window.Xwb) Xwb={};
-/*
-Xwb.cfg={	basePath :	'/action.php',
-			routeMode:  0,
-			routeVname: 'm',
-			loginCfg : 	1,
-
-			wbList: {},
-	
-			authenCfg:	'0',
- 
-			authenTit:	'',
- 
-			webName:	'微博趋势',
- 
-			uid: 		'<%=user!=null?user.getId():""%>', 
- 
-			siteUid:	'',
- 
-			siteUname:	'Guest',
- 
-			siteName:	'NoneSite',
- 
-			siteReg:	'',
-			remind: 0,
-			maxid: '',
-			page: 'index',
-			akey: '1126698900',
-			ads: [{"flag":"global_bottom","page":"global","cfg":[]}]};
-*/
-
-</script>    
 <br>
 <a href="#" class="gotop hidden" id="gotop">
 	<span class="gotop-bg"></span>

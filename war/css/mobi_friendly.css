@@ -1,25 +1,47 @@
 
 	#container .main{ margin-right:200px;}
-
+	.user-pic-inner{float:left;margin-right:8px;display:none}
+	
 	@media
-	only screen and (max-width : 800px)
+	only screen and (max-width : 600px)
 	{
-		#wrapper .wrapper-in{ width:auto;  min-width:500px;}
+		#wrapper .wrapper-in{ width:100%;  min-width:500px;}
 		#header{min-width:500px;};
 		#container{ background:#fff}
 		#container .sidebar{width:0px; display:none;}
-		#container .main{ margin-right:0px; background:white; min-width:500px; }
+		#container .main{ margin-right:0px; background:white;}
 		#xwb_weibo_list {padding:10px 2px 0px 0px}
-		.feed-list .feed-tit{ padding-bottom:0px;font-size:14px;}
-		.feed-list .feed-tit h3{ text-indent:0px; font-size:14px;}
-		.feed-list .feed-filter{ float:right; font-size:14px;}
+		.feed-list .feed-tit{font-size:14px;}
+		.feed-list .feed-tit h3{ font-size:14px;}
+		.feed-list .feed-tit feed-filter{font-size:14px;}
+		.feed-list .feed-content {margin-left: 8px;_margin-left: 5px;}
+		.feed-list .feed-main {overflow-y:auto; }
+		.user-pic{display:none;}
+		.user-pic-inner{display:block;}
+	}
+	
+	@media 
+	only screen and (min-width : 601px) and (max-width : 799px)
+	{
+		#wrapper .wrapper-in{width:600px; min-width: 600px;}
+		#container{ background:#fff } 
+		#container .sidebar{width:0px; display:none;}
+		#container .main{ margin-right:0px; background:white;}
+		
+		.user-pic{display:block;}
+		.user-pic-inner{display:none;}
+		
 	}
 
 	@media 
 	only screen and (min-width : 800px)
 	{
-		#wrapper .wrapper-in{width:800px; max-width: 800px;}
+		#wrapper .wrapper-in{width:800px; min-width: 800px;}
 		#container{ background:#fff url(bgimg/user_y_bg.png} 
 		#container .sidebar{float:right; _margin-left:-3px; width:200px; display:block;}
 		#container .main{ margin-right:200px; padding-bottom:10px; _margin-right:197px; _zoom:1;}
-¡¡¡¡}
+		
+		.user-pic{display:block;}
+		.user-pic-inner{display:none;}
+		
+	}

@@ -3,8 +3,19 @@
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="weibo4j.model.User" %>
+<%@ page import="weibotrends.WeiboTops" %>
 <%
 	User user = (User)session.getAttribute("user");
+	WeiboTops wt = (WeiboTops)request.getAttribute("weiboTops");
+	String userId = null;
+	String screenName = null;
+	if (user!=null){
+		userId = user.getId();
+		screenName = user.getName();
+	}else if (wt!=null && wt.getUserConfig().getAccessToken()!=null){
+		userId = wt.getUserConfig().getUserId();
+		screenName = wt.getUserConfig().getName();
+	}
 %>
 
 
@@ -14,10 +25,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 <meta name="viewport" content="width=device-width" />
 
-<title>微博趋势 - 最新热点</title> 
+<title>微博趋势 - 最新热点
+<%
+	if (screenName!=null){
+		out.println(" - " + screenName);
+	}
+%>
+</title> 
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-<link rel="alternate" type="application/rss+xml" title="RSS"href="/weibotops?m=rss" />
+<link rel="alternate" type="application/rss+xml" title="RSS"href="/weibotops?m=rss<%=userId==null?"":"&userId="+userId %>" />
  
 <link href="/css/base.css" rel="stylesheet" type="text/css" /> 
 <link href="/css/skin_default/skin.css" rel="stylesheet" type="text/css" /> 
@@ -27,9 +44,6 @@
 　<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
 <![endif]-->
 
-<script type="text/javascript" src="/js/jquery.min.js"></script> 
-<script type="text/javascript" src="/js/xwbapi.min.js"></script> 
-<script type="text/javascript" src="/js/xwb.min.js"></script> 
 
     
 </head> 
@@ -79,7 +93,7 @@
 			 
 					<div class="menu"> 
 						<ul> 
-							<li><a hideFocus="true" class="menu-pub" href="http://weibo.com/pub/?source=toptray" target="_blank">微博广场</a></li> 
+							<li><a hideFocus="true" class="menu-pub" href="http://hot.weibo.com/" target="_blank">微博广场</a></li> 
 							<li><a hideFocus="true" class="menu-user" href="http://weibo.com/" target="_blank">微博首页</a></li> 
 							<li><a hideFocus="true" class="menu-home" href="/weibotops?m=list">最新热推</a></li> 
 							<%
@@ -135,7 +149,7 @@
 						</p>
 						<p>&nbsp;</p>
 						<p>
-							<a href="/weibotops?m=rss"><img src="/rss_button.gif" border="0"></img></a>
+							<a href="/weibotops?m=rss<%=userId==null?"":"&userId="+userId %>"><img src="/rss_button.gif" border="0" title="RSS" alt="RSS"></img></a>
 						</p>
 					</div> 
 				</div> 
