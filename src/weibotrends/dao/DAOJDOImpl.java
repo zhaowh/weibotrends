@@ -1,5 +1,7 @@
 package weibotrends.dao;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +100,8 @@ public class DAOJDOImpl implements DAO {
 	 * @see weibotrends.DAO#storeUserConfig(weibotrends.UserConfig)
 	 */
 	public void storeUserConfig(UserConfig userConfig){
+		userConfig.setLastRtTime(new Date(System.currentTimeMillis()));
+
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {
 			pm.makePersistent(userConfig);
@@ -159,6 +163,32 @@ public class DAOJDOImpl implements DAO {
 	    return userConfig;
 		
 	}	
+	
+	public List<UserConfig> fetchValidUserConfigs(){
+
+    	List<UserConfig> list2 = new ArrayList<UserConfig>();
+    	
+	    PersistenceManager pm = PMF.get().getPersistenceManager();
+    	Query query = pm.newQuery(UserConfig.class);
+    	try{
+	    	List<UserConfig> list = (List<UserConfig> )query.execute();
+
+	    	for (UserConfig c : list){
+				if (c.getAccessToken()==null) continue;
+				
+				if (c.getLastRtTime()!=null){
+					long interval = System.currentTimeMillis() - c.getLastRtTime().getTime();
+					long aWeek = 7 * 24 *60 *60 *1000;
+					if (interval > aWeek) continue; //一周以上未转发，授权已失效
+				}
+				list2.add(c);
+	    	}
+    	}finally{
+    		query.closeAll();
+    		pm.close();
+    	}
+    	return list2;
+	}
 	
 
 }

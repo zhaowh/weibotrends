@@ -68,7 +68,7 @@ public class WeiboCache {
 	}
 	*/
 	
-	private static String getTweetIdsKey(String type){
+	private static String genTweetIdsKey(String type){
 		String key = Tweet.class.getName()+"$ids";
 		if (type != null){
 			key = key + "."+type;
@@ -86,10 +86,10 @@ public class WeiboCache {
 	
 	
 	public static Set<String> getTweetKeys(String type){
-		Object v = get(getTweetIdsKey(type));
+		Object v = get(genTweetIdsKey(type));
 		Object[]ids = (Object[])v;
 		
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<String>(ids==null?0:ids.length);
 
 		if(ids!=null) for (Object id : ids){
 			set.add((String)id);
@@ -106,7 +106,7 @@ public class WeiboCache {
 	public static void putTweetKeys(Set<String> keys,String type){
 		Set<String> allKeys = getTweetKeys(type);
 		allKeys.addAll(keys);	
-		put(getTweetIdsKey(type), allKeys.toArray());
+		put(genTweetIdsKey(type), allKeys.toArray());
 	}
 	
 	/*
@@ -118,7 +118,7 @@ public class WeiboCache {
 	public static void delTweetKeys(Set<String> keys,String type){
 		Set<String> allKeys = getTweetKeys(type);
 		allKeys.removeAll(keys);	
-		put(getTweetIdsKey(type), allKeys.toArray());
+		put(genTweetIdsKey(type), allKeys.toArray());
 	}
 	public static void delTweetKeys(Set<String> keys){
 		delTweetKeys(keys, null);
@@ -205,5 +205,5 @@ public class WeiboCache {
 			
 	public static Map<Long,Tweet> getTopTweets(){
 		return getAllTweets("tops");
-	}	
+	}
 }

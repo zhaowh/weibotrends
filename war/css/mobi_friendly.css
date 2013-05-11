@@ -5,8 +5,8 @@
 	@media
 	only screen and (max-width : 600px)
 	{
-		#wrapper .wrapper-in{ width:100%;  min-width:500px;}
-		#header{min-width:500px;};
+		#wrapper .wrapper-in{ width:100%;  min-width:440px;}
+		#header{min-width:440px;};
 		#container{ background:#fff}
 		#container .sidebar{width:0px; display:none;}
 		#container .main{ margin-right:0px; background:white;}

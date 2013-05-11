@@ -4,6 +4,14 @@
 <%@ page import="java.util.*" %>
 <%@ page import="weibo4j.model.User" %>
 <%@ page import="weibotrends.WeiboTops" %>
+<%@ page import="weibotrends.UserConfig" %>
+<%!
+	public String formatVerfied(boolean isVerfied){
+		String s = "<img src='var/data/logo/default_v2.png' border='0' width='11px' height='10px' alt='V' title='新浪认证'>";
+		return isVerfied?s:"";
+	}
+	
+%>
 <%
 	User user = (User)session.getAttribute("user");
 	WeiboTops wt = (WeiboTops)request.getAttribute("weiboTops");
@@ -86,7 +94,7 @@
 				</div> 
 			 
 				<div class="inner-header"> 
-					<a class="logo" href="/index.php?m=pub">
+					<a class="logo" href="http://weibo.com">
 					  <!--<img id="logo" src="/var/data/logo/default_logo.png"/>-->
 					  <img id="logo" width="140px" src="/weibo.png"/>
 					</a> 
@@ -117,29 +125,45 @@
 			
 			<div id="container"> 
 				<div class="sidebar"> 
-				<%
-					if (user!=null){
+				<% 
+					if (wt!=null && wt.getUserConfig().getAccessToken()!=null){
 				%>
 					<div class="user-preview"> 
 						<div class="user-info"> 
-							<a class="user-pic" href="http://weibo.com/<%=user.getId()%>" target="_blank">
-								<img src="<%=user.getProfileImageUrl()%>" title="<%=user.getName()%>" /></a> 
+							<a class="user-pic" href="http://weibo.com/<%=wt.getUserConfig().getUserId()%>" target="_blank">
+								<img src="<%=wt.getUserConfig().getProfileImageUrl()%>" title="<%=wt.getUserConfig().getName()%>" /></a> 
 							<div class="user-intro"> 
-								<strong><%=user.getName()%></strong> 
-								<p class="icon-bg icon-male"><%=user.getLocation()%></p> 
+								<strong><%=wt.getUserConfig().getName()%></strong> 
+								<p class="icon-bg icon-<%="f".equals(wt.getUserConfig().getGender())?"female":"male" %>"><%=wt.getUserConfig().getLocation()%></p> 
 							</div> 
 						</div> 
-						<p><%=user.getDescription()%></p> 
+						<p><%=wt.getUserConfig().getDescription()%></p> 
 					</div>  
 				<%
 					}
 				%>
   					<div class="user-sidebar"> 
+  						<div class="sidebar-head">热推微博</div> 
+						<ul> 
+						<%
+	  						List<UserConfig> list = WeiboTops.getValidUserConfigs();
+							for (UserConfig u: list){
+						%>
+							<li> 
+								<a href="/weibotops?u=<%=u.getUserId() %>" title="<%=u.getName() %>">
+									<img src="<%=u.getProfileImageUrl() %>" alt="<%=u.getName() %>" title="<%=u.getName() %>" /></a> 
+								<p><a href="/weibotops?u=<%=u.getUserId() %>" ><%=u.getName() %></a></p> 
+								<!-- a class="sub-link" rel="e:fl,u:<%=u.getUserId() %>,t:2" href="#">关注他</a  --> 
+							</li> 
+						<%
+							}
+						%>
+						</ul>
 						<div class="sidebar-head">敬请关注</div> 
 						<ul> 
 							<li> 
 								<a href="http://weibo.com/1862386965" title="微博趋势"  target="_blank">
-									<img src="http://tp2.sinaimg.cn/1862386965/50/1296452915/1" alt="微博趋势" title="你们有相同的话题" /></a> 
+									<img src="http://tp2.sinaimg.cn/1862386965/50/1296452915/1" alt="微博趋势" title="微博趋势" /></a> 
 								<p><a href="http://weibo.com/1862386965" target="_blank">微博趋势</a></p> 
 								<!-- a class="sub-link" rel="e:fl,u:1862386965,t:2" href="#">关注他</a  --> 
 							</li> 

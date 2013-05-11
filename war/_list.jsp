@@ -56,6 +56,11 @@
 		}
 		return s;	
 	}
+	
+	public String escapeHTML(String str){
+		if (str==null) return null;
+		return str.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace("\"","&quot;").replace("\'","&#39;");
+	}
 
 %>
 
@@ -137,7 +142,7 @@ for (Tweet t : tweets){
 			 		Tweet rt = itr.next();
 			 		if (user!=null && rt.getScreenName().equals(user.getName())) continue;
 			%>
-				<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank">
+				<a href="http://weibo.com/<%=rt.getUserId()%>/<%=formatMid(rt.getMid())%>" target="_blank" title="<%=escapeHTML(rt.getText())%>">
 					<%=rt.getScreenName()%><%=formatVerfied(rt.isVerified()) %>
 				</a>
 			<%

@@ -32,6 +32,21 @@ public class UserConfig  implements java.io.Serializable {
 	private String accessToken;
 	
 	@Persistent 
+	private String profileImageUrl;
+	
+	@Persistent 
+	private Boolean isVerified;
+	
+	@Persistent 
+	private String gender;
+	
+	@Persistent 
+	private String location;
+	
+	@Persistent 
+	private String description;
+	
+	@Persistent 
 	private int minRtCount = 200;
 	
 	@Persistent 
@@ -82,7 +97,7 @@ public class UserConfig  implements java.io.Serializable {
 	
 	
 	public UserConfig(){
-
+		this.disabled = true;
 	}
 	
 	public UserConfig(String uid, String accessToken){
@@ -112,6 +127,46 @@ public class UserConfig  implements java.io.Serializable {
 	public String getAccessToken() {
 		return accessToken;
 	}
+	public void setProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	public String getProfileImageUrl() {
+		return profileImageUrl;
+	}
+
+	public void setVerified(boolean isVerified) {
+		this.isVerified = isVerified;
+	}
+
+	public boolean isVerified() {
+		return isVerified==null || isVerified;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public int getMinRtCount() {
 		return minRtCount;
 	}

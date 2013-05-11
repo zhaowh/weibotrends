@@ -4,6 +4,7 @@ package weibotrends;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,10 +98,23 @@ public class WeiboTops  implements java.io.Serializable {
 		if (this.user == null){
 			this.user = weibo.showUserById(this.userConfig.getUserId());
 			this.userConfig.setName(this.user.getScreenName());
+			this.userConfig.setProfileImageUrl(this.user.getProfileImageUrl());
+			this.userConfig.setVerified(this.user.isVerified());
+			this.userConfig.setGender( this.user.getGender());
+			this.userConfig.setLocation(this.user.getLocation());
+			this.userConfig.setDescription( this.user.getDescription());
+			
 			saveUserConfig(this.userConfig);
 		}
 		return this.user ;
 	}
+	
+	public static List<UserConfig> getValidUserConfigs(){
+		DAO dao = DAOFactory.getDAO();
+		List<UserConfig> list = dao.fetchValidUserConfigs();
+		return list;
+	}
+
 	
 	//计算转发速度
 	private static double calcRtSpeed(int reposts, int comments, Date createdAt,  int follows){
@@ -119,7 +133,7 @@ public class WeiboTops  implements java.io.Serializable {
 	}
 
 	//计算并设置转发速度
-    private void resetRtSpeed(Tweet t){
+    private  void resetRtSpeed(Tweet t){
     	Date now = new Date(System.currentTimeMillis());
 
     	if (t==null || t.getScreenName() == null || t.getCreatedAt() == null) {
@@ -204,7 +218,7 @@ public class WeiboTops  implements java.io.Serializable {
     	
     }
     
-    private boolean isCountExpired(Tweet t, long countInterval){
+    private static boolean isCountExpired(Tweet t, long countInterval){
 		if (t.getCountTime()!=null && t.getCountTime().getTime() + countInterval < System.currentTimeMillis() //已到计数超时时间
 			){  
 			return true; 
@@ -251,7 +265,7 @@ public class WeiboTops  implements java.io.Serializable {
     //加载缓存微博
     private Map<Long, Tweet> loadCachedTweets() throws WeiboException{
     	Map<Long, Tweet> cachedTweets = WeiboCache.getAllTweets(userConfig.getUserId());
-    	//同时加载热门微博（可能由其他用户搜索提供）
+    	//同时加载热门微博（包含由其他用户搜索提供）
     	Map<Long, Tweet> topTweets = WeiboCache.getTopTweets();
     	cachedTweets.putAll(topTweets);
     	log.fine("load cached: " + cachedTweets.size()); 
@@ -379,22 +393,24 @@ public class WeiboTops  implements java.io.Serializable {
 		Map<Long, Tweet> cachedTweets = loadCachedTweets();
 		long sinceId = getMaxId(cachedTweets);
 		
-		//并发
-		List<Future<HTTPResponse>> newTasks = preLoadNewTweets(sinceId); 
-		Future<HTTPResponse> myRepostsTasks = preRepostsByMe();
-		List<Future<HTTPResponse>> recountTasks = preRecountTweets(cachedTweets);
-
-		Future<HTTPResponse> friendsTask = weibo.preFriendsIdsByUid(this.userConfig.getUserId());
-		//更新关注ID
-		loadFriendsIds(friendsTask);
-		
-		//刷新缓存微博计数及速度
-		recountTweets(cachedTweets, recountTasks);
-		//加载已转发微博ID
-		loadRepostsByMe(myRepostsTasks);
-		//加载新微博
-		Map<Long, Tweet> newTweets = loadNewTweets(newTasks);
-		
+		Map<Long, Tweet> newTweets = Collections.emptyMap();
+		if (this.userConfig.getAccessToken()!=null){
+			//并发
+			List<Future<HTTPResponse>> newTasks = preLoadNewTweets(sinceId); 
+			Future<HTTPResponse> myRepostsTasks = preRepostsByMe();
+			List<Future<HTTPResponse>> recountTasks = preRecountTweets(cachedTweets);
+	
+			Future<HTTPResponse> friendsTask = weibo.preFriendsIdsByUid(this.userConfig.getUserId());
+			//更新关注ID
+			loadFriendsIds(friendsTask);
+			
+			//刷新缓存微博计数及速度
+			recountTweets(cachedTweets, recountTasks);
+			//加载已转发微博ID
+			loadRepostsByMe(myRepostsTasks);
+			//加载新微博
+			newTweets = loadNewTweets(newTasks);
+		}
 		Map<Long, Tweet> all = new HashMap<Long, Tweet>(cachedTweets.size() + newTweets.size());
 		all.putAll(cachedTweets);
 		all.putAll(newTweets);
@@ -612,6 +628,7 @@ public class WeiboTops  implements java.io.Serializable {
 				if (t.getPrimaryTweet() != null) {
 					this.userConfig.addRepostedId(t.getPrimaryTweet().getId());
 				}
+				this.userConfig.setLastRtTime(new Date(System.currentTimeMillis()));
 				saveUserConfig(this.userConfig);
 				
 				if (isIncluded && this.userConfig.isAutoFollow()){

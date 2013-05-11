@@ -1,6 +1,7 @@
 package weibotrends.dao;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import weibotrends.Tweet;
@@ -28,5 +29,7 @@ public interface DAO {
 	 * @see weibotrends.DAO#fetchUserConfigByToken(java.lang.String)
 	 */
 	public abstract UserConfig fetchUserConfigByToken(String accessToken);
+	
+	public List<UserConfig> fetchValidUserConfigs();
 
 }

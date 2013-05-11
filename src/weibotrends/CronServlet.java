@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,26 +44,30 @@ public class CronServlet extends HttpServlet {
 		
 		Queue queue = QueueFactory.getDefaultQueue();
 
-	    PersistenceManager pm = PMF.get().getPersistenceManager();
-    	Query query = pm.newQuery(UserConfig.class);
-	    try {
-	    	List<UserConfig> list = (List<UserConfig> )query.execute();
-	    	for (UserConfig c : list){
-				TaskOptions opts = TaskOptions.Builder.withUrl("/task");
-				opts.method(Method.POST);
-				opts.param("m", "refresh_tweets");
-				opts.param("uid", c.getUserId());
-				opts.param("token", c.getAccessToken());
-				queue.add(opts);
-				out.println(opts.getUrl()+"<br>");
-				log.fine(opts.getUrl());
-	    	}
-	    } finally {
-	    	query.closeAll();
-	        pm.close();
-	    }	
-	    
-	    out.close();
+		List<UserConfig> list = WeiboTops.getValidUserConfigs();
+		for (UserConfig c : list) {
+			if (c.getAccessToken() == null)
+				continue;
+
+			if (c.getLastRtTime() != null) {
+				long interval = System.currentTimeMillis()
+						- c.getLastRtTime().getTime();
+				long aWeek = 7 * 24 * 60 * 60 * 1000;
+				if (interval > aWeek)
+					continue; // 一周以上未转发，授权已失效
+			}
+
+			TaskOptions opts = TaskOptions.Builder.withUrl("/task");
+			opts.method(Method.POST);
+			opts.param("m", "refresh_tweets");
+			opts.param("uid", c.getUserId());
+			opts.param("token", c.getAccessToken());
+			queue.add(opts);
+			out.println(opts.getUrl() + "<br>");
+			log.fine(opts.getUrl());
+		}
+
+		out.close();
 
 	}
 	
