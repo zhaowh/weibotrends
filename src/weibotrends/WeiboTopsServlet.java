@@ -189,7 +189,7 @@ public class WeiboTopsServlet extends HttpServlet {
 		UserConfig conf = wt.getUserConfig(); 
 		
 		conf.setMinRtCount(getInt(req,"min_rt_count",conf.getMinRtCount()));
-		conf.setMinRtSpeed(getInt(req,"min_rt_speed",conf.getMinRtCount()));
+		conf.setMinRtSpeed(getInt(req,"min_rt_speed",conf.getMinRtSpeed()));
 		conf.setMaxPostedHour(getInt(req,"max_posted_hour",conf.getMaxPostedHour()));
 		conf.setRtInterval(getInt(req,"rt_interval",conf.getRtInterval()));
 		conf.setVerifiedOnly(getBool(req,"verified_only",conf.isVerifiedOnly()));

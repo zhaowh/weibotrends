@@ -100,7 +100,6 @@ public class DAOJDOImpl implements DAO {
 	 * @see weibotrends.DAO#storeUserConfig(weibotrends.UserConfig)
 	 */
 	public void storeUserConfig(UserConfig userConfig){
-		userConfig.setLastRtTime(new Date(System.currentTimeMillis()));
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		try {

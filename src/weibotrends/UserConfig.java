@@ -171,14 +171,14 @@ public class UserConfig  implements java.io.Serializable {
 		return minRtCount;
 	}
 	public void setMinRtCount(int minRtCount) {
-		if(minRtCount>MIN_RT_COUNT) minRtCount=MIN_RT_COUNT;
+		if(minRtCount<MIN_RT_COUNT) minRtCount=MIN_RT_COUNT;
 		this.minRtCount = minRtCount;
 	}
 	public int getMinRtSpeed() {
 		return minRtSpeed;
 	}
 	public void setMinRtSpeed(int minRtSpeed) {
-		if (minRtSpeed>MIN_RT_SPEED) minRtSpeed=MIN_RT_SPEED;
+		if (minRtSpeed<MIN_RT_SPEED) minRtSpeed=MIN_RT_SPEED;
 		this.minRtSpeed = minRtSpeed;
 	}
 	public int getMaxPostedHour() {

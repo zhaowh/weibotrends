@@ -3,10 +3,9 @@
 	.user-pic-inner{float:left;margin-right:8px;display:none}
 	
 	@media
-	only screen and (max-width : 600px)
+	only screen and (max-width : 599px)
 	{
-		#wrapper .wrapper-in{ width:100%;  min-width:440px;}
-		#header{min-width:440px;};
+		#wrapper .wrapper-in{ width:100%;  min-width:478px;} 
 		#container{ background:#fff}
 		#container .sidebar{width:0px; display:none;}
 		#container .main{ margin-right:0px; background:white;}
@@ -21,7 +20,7 @@
 	}
 	
 	@media 
-	only screen and (min-width : 601px) and (max-width : 799px)
+	only screen and (min-width : 600px) and (max-width : 799px)
 	{
 		#wrapper .wrapper-in{width:600px; min-width: 600px;}
 		#container{ background:#fff } 

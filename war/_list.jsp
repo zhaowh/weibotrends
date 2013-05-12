@@ -112,18 +112,18 @@ for (Tweet t : tweets){
 
 <li rel="w:<%=t.getId()%>">
 	<div class="user-pic"> 
-		<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank">
+		<a href="http://weibo.com/u/<%=t.getUserId()%>" target="_blank">
 			<img width="50" height="50" src="<%=t.getProfileImageUrl()%>" alt="<%=t.getScreenName()%>" title="<%=t.getScreenName()%>" />
 		</a> 
 	</div> 
 	<div class="feed-content"> 
 		<div class="feed-main"> 
 			<div class="user-pic user-pic-inner"> 
-				<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank">
+				<a href="http://weibo.com/u/<%=t.getUserId()%>" target="_blank">
 					<img width="50" height="50" src="<%=t.getProfileImageUrl()%>" alt="<%=t.getScreenName()%>" title="<%=t.getScreenName()%>" />
 				</a> 
 			</div> 
-			<a href="http://weibo.com/<%=t.getUserId()%>" target="_blank" title="<%=t.getScreenName()%>">
+			<a href="http://weibo.com/u/<%=t.getUserId()%>" target="_blank" title="<%=t.getScreenName()%>">
 				<%=t.getScreenName()%><%=formatVerfied(t.isVerified()) %>
 			</a>：<%=formatText(t.getText())%>
 			<%
@@ -161,7 +161,7 @@ for (Tweet t : tweets){
 		<div class="box-style"> 
 			<div class="box-t skin-bg"><span class="skin-bg"></span></div> 
 			<div class="forward box-content"> 
-				<p><a href="http://weibo.com/<%=t.getPrimaryTweet().getUserId()%>" target="_blank">@<%=t.getPrimaryTweet().getScreenName()%><%=formatVerfied(t.isVerified()) %></a>：<%=formatText(t.getPrimaryTweet().getText())%>
+				<p><a href="http://weibo.com/u/<%=t.getPrimaryTweet().getUserId()%>" target="_blank">@<%=t.getPrimaryTweet().getScreenName()%><%=formatVerfied(t.isVerified()) %></a>：<%=formatText(t.getPrimaryTweet().getText())%>
 				</p> 
 <%
 		if (t.getPrimaryTweet().getThumbnailPic() != null && t.getPrimaryTweet().getThumbnailPic().trim().length()>0){

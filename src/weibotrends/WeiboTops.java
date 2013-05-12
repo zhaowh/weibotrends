@@ -103,7 +103,8 @@ public class WeiboTops  implements java.io.Serializable {
 			this.userConfig.setGender( this.user.getGender());
 			this.userConfig.setLocation(this.user.getLocation());
 			this.userConfig.setDescription( this.user.getDescription());
-			
+			this.userConfig.setLastRtTime(new Date(System.currentTimeMillis()));
+
 			saveUserConfig(this.userConfig);
 		}
 		return this.user ;

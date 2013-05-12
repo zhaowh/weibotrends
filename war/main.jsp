@@ -78,7 +78,7 @@
 							<%
 							if (user!=null){
 							%>
-								<a  href="http://weibo.com/<%=user.getId()%>" target="_blank"><%=user.getName()%></a> 
+								<a  href="http://weibo.com/u/<%=user.getId()%>" target="_blank"><%=user.getName()%></a> 
 								| <a href="/weibotops?m=logout">退出</a> 
 							<%
 							}else{
@@ -130,10 +130,10 @@
 				%>
 					<div class="user-preview"> 
 						<div class="user-info"> 
-							<a class="user-pic" href="http://weibo.com/<%=wt.getUserConfig().getUserId()%>" target="_blank">
+							<a class="user-pic" href="http://weibo.com/u/<%=wt.getUserConfig().getUserId()%>" target="_blank">
 								<img src="<%=wt.getUserConfig().getProfileImageUrl()%>" title="<%=wt.getUserConfig().getName()%>" /></a> 
 							<div class="user-intro"> 
-								<strong><%=wt.getUserConfig().getName()%></strong> 
+								<a href="http://weibo.com/u/<%=wt.getUserConfig().getUserId()%>" target="_blank"><strong><%=wt.getUserConfig().getName()%></strong> </a>
 								<p class="icon-bg icon-<%="f".equals(wt.getUserConfig().getGender())?"female":"male" %>"><%=wt.getUserConfig().getLocation()%></p> 
 							</div> 
 						</div> 
@@ -162,9 +162,9 @@
 						<div class="sidebar-head">敬请关注</div> 
 						<ul> 
 							<li> 
-								<a href="http://weibo.com/1862386965" title="微博趋势"  target="_blank">
+								<a href="http://weibo.com/u/1862386965" title="微博趋势"  target="_blank">
 									<img src="http://tp2.sinaimg.cn/1862386965/50/1296452915/1" alt="微博趋势" title="微博趋势" /></a> 
-								<p><a href="http://weibo.com/1862386965" target="_blank">微博趋势</a></p> 
+								<p><a href="http://weibo.com/u/1862386965" target="_blank">微博趋势</a></p> 
 								<!-- a class="sub-link" rel="e:fl,u:1862386965,t:2" href="#">关注他</a  --> 
 							</li> 
 						</ul>
