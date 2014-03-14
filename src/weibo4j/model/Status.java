@@ -1,6 +1,7 @@
 package weibo4j.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -260,24 +261,48 @@ public class Status extends WeiboResponse implements java.io.Serializable {
 		this.truncated = truncated;
 	}
 	public static StatusWapper constructWapperStatus(Response res) throws WeiboException {
-		JSONObject jsonStatus = res.asJSONObject(); //asJSONArray();
+		JSONObject jsonStatus = null;
 		JSONArray statuses = null;
+
 		try {
-			if(!jsonStatus.isNull("statuses")){				
-				statuses = jsonStatus.getJSONArray("statuses");
+			long previousCursor = 0;
+			long nextCursor = 0;
+			long totalNumber = 0;
+			String hasvisible = null;
+			List<Status> status = Collections.emptyList();
+			try{
+				statuses = res.asJSONArray();
+			}catch(WeiboException we){
+				jsonStatus = res.asJSONObject(); //asJSONArray();	
+			} 	
+			if (jsonStatus!=null){
+				if(!jsonStatus.isNull("statuses")){				
+					statuses = jsonStatus.getJSONArray("statuses");
+				}
+				if(!jsonStatus.isNull("reposts")){
+					statuses = jsonStatus.getJSONArray("reposts");
+				}
+				previousCursor = jsonStatus.getLong("previous_curosr");
+				nextCursor = jsonStatus.getLong("next_cursor");
+				totalNumber = jsonStatus.getLong("total_number");
+				hasvisible = jsonStatus.getString("hasvisible");
 			}
-			if(!jsonStatus.isNull("reposts")){
-				statuses = jsonStatus.getJSONArray("reposts");
+			if (statuses!=null){
+				int size = statuses.length();
+				status = new ArrayList<Status>(size);
+				for (int i = 0; i < size; i++) {
+					Object o = statuses.get(i);
+					if (o instanceof JSONObject){
+						status.add(new Status(statuses.getJSONObject(i)));
+					}else{
+						Status s = new Status();
+						s.setId(statuses.getString(i));
+					}
+					status.add(new Status(statuses.getJSONObject(i)));
+				}
+				if (totalNumber == 0) totalNumber = status.size();
 			}
-			int size = statuses.length();
-			List<Status> status = new ArrayList<Status>(size);
-			for (int i = 0; i < size; i++) {
-				status.add(new Status(statuses.getJSONObject(i)));
-			}
-			long previousCursor = jsonStatus.getLong("previous_curosr");
-			long nextCursor = jsonStatus.getLong("next_cursor");
-			long totalNumber = jsonStatus.getLong("total_number");
-			String hasvisible = jsonStatus.getString("hasvisible");
+			
 			return new StatusWapper(status, previousCursor, nextCursor,totalNumber,hasvisible);
 		} catch (JSONException jsone) {
 			throw new WeiboException(jsone);

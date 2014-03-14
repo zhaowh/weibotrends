@@ -2,6 +2,7 @@ package weibotrends;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -171,14 +172,16 @@ public class UserConfig  implements java.io.Serializable {
 		return minRtCount;
 	}
 	public void setMinRtCount(int minRtCount) {
-		if(minRtCount<MIN_RT_COUNT) minRtCount=MIN_RT_COUNT;
+		//if(minRtCount<MIN_RT_COUNT) minRtCount=MIN_RT_COUNT;
+		if(minRtCount<10) minRtCount=10;
 		this.minRtCount = minRtCount;
 	}
 	public int getMinRtSpeed() {
 		return minRtSpeed;
 	}
 	public void setMinRtSpeed(int minRtSpeed) {
-		if (minRtSpeed<MIN_RT_SPEED) minRtSpeed=MIN_RT_SPEED;
+		//if (minRtSpeed<MIN_RT_SPEED) minRtSpeed=MIN_RT_SPEED;
+		if(minRtCount<1) minRtCount=1;
 		this.minRtSpeed = minRtSpeed;
 	}
 	public int getMaxPostedHour() {
@@ -251,15 +254,27 @@ public class UserConfig  implements java.io.Serializable {
 	}
 
 	public void addRepostedId(Long id) {
-		if (this.repostedIds.size()>100){//最多保存100个
-			this.repostedIds.pollFirst();
+		if (this.repostedIds.size()>=100){//最多保存100个
+			log.finest("before remove size="+this.repostedIds.size());
+			for (int i=0; i<5; i++){
+				this.repostedIds.remove(this.repostedIds.first());
+			}
+			log.finest("after remove size="+this.repostedIds.size());
+		}
+		if (this.repostedIds.size()>=200){ //fix  treeset remove failed
+			TreeSet<Long> ids = new TreeSet<Long>();
+			int i=0;
+			for (Iterator<Long> itr = this.repostedIds.descendingIterator(); i<100 && itr.hasNext();i++){
+				ids.add(itr.next());
+			}
+			this.repostedIds = ids;
 		}
 		this.repostedIds.add(id);
 		log.finest(id+" added. size="+this.repostedIds.size());
 	}
 
 	public Set<Long> getRepostedIds() {
-		//log.finest("size="+this.repostedIds.size());
+		//log.finest("size="+this.repostedIds.size());                                                                                                         
 		return this.repostedIds;
 	}
 

@@ -1,4 +1,5 @@
 package weibotrends;
+
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
@@ -10,5 +11,5 @@ public final class PMF {
 
     public static PersistenceManagerFactory get() {
         return pmfInstance;
-    }
+    } 
 }

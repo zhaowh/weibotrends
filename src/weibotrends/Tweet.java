@@ -564,6 +564,21 @@ public class Tweet  implements java.io.Serializable {
 		+  "]";
 	}
 	
+	public String toHTML(){
+		String text = "<a href='http://www.weibo.com/"+getUserId()+"'>@" + getScreenName() + "</a>: " + getText();
+		if (getBmiddlePic()!=null && getBmiddlePic().trim().length()>0){
+			text = text + "\n<br><a href='"+getOriginalPic()+"'><img border=0 src='"+getBmiddlePic()+"'></img></a>";
+		}
+		if (getPrimaryTweet()!=null){
+			text = text + "\n<hr><a href='http://www.weibo.com/"+getPrimaryTweet().getUserId()+"'>@" + getPrimaryTweet().getScreenName() + "</a>: \n<br>" + getPrimaryTweet().getText();
+			if (getPrimaryTweet().getBmiddlePic()!=null && getPrimaryTweet().getBmiddlePic().trim().length()>0){
+				text = text + "\n<br><a href='"+getPrimaryTweet().getOriginalPic()+"'><img  border=0 src='"+getPrimaryTweet().getBmiddlePic()+"'></img></a>";
+			}
+		}
+		return text;
+	}
+
+	
 	public boolean equals(Object obj){
 		if (obj == null || !(obj instanceof Tweet)){
 			return false;

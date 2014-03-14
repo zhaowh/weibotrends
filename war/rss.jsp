@@ -62,7 +62,14 @@ for (Tweet t : tweets){
 %>
 
 		<item>
-			<title><![CDATA[<%=t.getScreenName()%>: <%=t.getText()%>]]></title>
+			<title><![CDATA[
+			<%
+				if (t.getPrimaryTweet()!=null){
+					out.print(t.getPrimaryTweet().getScreenName() + "："+ t.getPrimaryTweet().getText());
+				}else{
+					out.print(t.getScreenName() + "："+ t.getText());
+				}
+			%>]]></title>
 			<description><![CDATA[<%=formatText(t)%>]]></description>
 			<%
 			if (t.getPrimaryTweet()!=null && t.getPrimaryTweet().getOriginalPic() != null && t.getPrimaryTweet().getOriginalPic().trim().length()>0){

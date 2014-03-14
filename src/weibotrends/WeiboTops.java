@@ -77,6 +77,7 @@ public class WeiboTops  implements java.io.Serializable {
 			dao.storeUserConfig(this.userConfig);
 		}
 		this.filter = new WeiboFilter(this.userConfig.getExcludedWords(), this.userConfig.getIncludedWords(), this.userConfig.getFollowedIds(), this.userConfig.isFollowedOnly(), this.userConfig.isFollowedFirst(), this.userConfig.isVerifiedOnly());
+		log.finest("name: "+this.userConfig.getName());
 	}
 	
 	private void reloadUserConfig(){
@@ -278,7 +279,7 @@ public class WeiboTops  implements java.io.Serializable {
 	private  List<Future<HTTPResponse>> preLoadNewTweets(long sinceId) throws WeiboException{
 		//同时搜索5页
 		log.fine("load new from: " + sinceId);
-		return weibo.preFriendsTimeline(0, 0, sinceId);
+		return weibo.preTimeline(sinceId);
 	}
 	
     //加载新微博并缓存
@@ -287,7 +288,7 @@ public class WeiboTops  implements java.io.Serializable {
 
 		Tweet lastTweet = null;
 
-		List<Status> statuses = weibo.getFriendsTimeline(tasks);
+		List<Status> statuses = weibo.getTimeline(tasks);
 
 		for (Status status : statuses) {
 			if (status.getCreatedAt() == null // 被删除贴无创建时间 
@@ -308,7 +309,8 @@ public class WeiboTops  implements java.io.Serializable {
 
 			
 			// 较热门才缓存
-			if (t.getRepostSpeed() >= MIN_RT_SPEED && t.getRepostsCount() >= MIN_RT_COUNT) {
+			if ((t.getRepostSpeed() >= MIN_RT_SPEED || t.getRepostSpeed() >= this.userConfig.getMinRtSpeed()) 
+					&& ( t.getRepostsCount() >= MIN_RT_COUNT) || t.getRepostsCount() >= this.userConfig.getMinRtCount()) {
 				newTweets.put(t.getId(), t);
 			}
 
@@ -345,29 +347,29 @@ public class WeiboTops  implements java.io.Serializable {
 		return newTweets;
 	}	
 	
-	private  Future<HTTPResponse> preRepostsByMe() throws WeiboException{
+	private  List<Future<HTTPResponse>>  preRepostsByMe() throws WeiboException{
 		long sinceId = this.userConfig.getLastRepostedId();
-		return weibo.preRepostsByMe(sinceId);
+		return weibo.preRepostsByMe(sinceId, this.userConfig.getUserId());
 	}
 	
     //刷新已转发微博ID
-	private  Set<Long> loadRepostsByMe( Future<HTTPResponse> task) throws WeiboException{
-		Set<Long> ids = this.userConfig.getRepostedIds();
-		List<Status> list = weibo.getRepostsByMe(task);
-		if (list!=null && !list.isEmpty()){
-			reloadUserConfig();
-			for (Status s : list){
-				this.userConfig.addRepostedId(Long.parseLong(s.getId()));
-				if (s.getRetweetedStatus()!=null){
-					this.userConfig.addRepostedId(Long.parseLong(s.getRetweetedStatus().getId()));
+	private  Set<Long> loadRepostsByMe( List<Future<HTTPResponse>>  taskList) throws WeiboException{
+		reloadUserConfig();
+		for (Future<HTTPResponse> task : taskList){
+			List<Status> list = weibo.getRepostsByMe(task);
+			if (list!=null && !list.isEmpty()){
+				for (Status s : list){
+					this.userConfig.addRepostedId(Long.parseLong(s.getId()));
+					if (s.getRetweetedStatus()!=null){
+						this.userConfig.addRepostedId(Long.parseLong(s.getRetweetedStatus().getId()));
+					}
 				}
+				saveUserConfig(this.userConfig);
+				log.fine("loaded reposted: " + list.size() + " all:" + this.userConfig.getRepostedIds().size());
 			}
-			ids = this.userConfig.getRepostedIds();
-			saveUserConfig(this.userConfig);
-			log.fine("loaded reposted: " + list.size() + " all:" + ids.size());
 		}
-		log.fine("all:" + ids.size());
-		return ids;
+		log.fine("all:" + this.userConfig.getRepostedIds().size());
+		return this.userConfig.getRepostedIds();
 	}
 	
 	private Set<String> loadFriendsIds( Future<HTTPResponse> task) throws WeiboException{
@@ -398,7 +400,7 @@ public class WeiboTops  implements java.io.Serializable {
 		if (this.userConfig.getAccessToken()!=null){
 			//并发
 			List<Future<HTTPResponse>> newTasks = preLoadNewTweets(sinceId); 
-			Future<HTTPResponse> myRepostsTasks = preRepostsByMe();
+			List<Future<HTTPResponse>> myRepostsTasks = preRepostsByMe();
 			List<Future<HTTPResponse>> recountTasks = preRecountTweets(cachedTweets);
 	
 			Future<HTTPResponse> friendsTask = weibo.preFriendsIdsByUid(this.userConfig.getUserId());
@@ -622,9 +624,12 @@ public class WeiboTops  implements java.io.Serializable {
 				repost = repost.substring(0, 140);
 			}
 
-			Status s = this.weibo.repost(String.valueOf(t.getId()), repost, 0);
-
-			if (s != null && s.getId() != null) {
+			Status s = null;
+			try{
+				s = this.weibo.repost(String.valueOf(t.getId()), repost, 0);
+			}catch(Exception e){
+				log.warning("repost error: "+e);
+			}finally{
 				this.userConfig.addRepostedId(t.getId());// 更新已转发列表
 				if (t.getPrimaryTweet() != null) {
 					this.userConfig.addRepostedId(t.getPrimaryTweet().getId());
@@ -635,7 +640,8 @@ public class WeiboTops  implements java.io.Serializable {
 				if (isIncluded && this.userConfig.isAutoFollow()){
 					this.weibo.createFriendshipsByName(t.getScreenName());
 				}
-
+			}
+			if (s != null && s.getId() != null) {
 				return true;
 			}else{
 				return false;

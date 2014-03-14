@@ -16,6 +16,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>WeiboTops</servlet-name>
 		<servlet-class>weibotrends.WeiboTopsServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>WeixinAPI</servlet-name>
+		<servlet-class>weixinmp.WeixinAPIServlet</servlet-class>
+	</servlet>	
 	<servlet-mapping>
 		<servlet-name>WeiboTops</servlet-name>
 		<url-pattern>/weibotops</url-pattern>
@@ -27,6 +31,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>Task</servlet-name>
 		<url-pattern>/task</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>WeixinAPI</servlet-name>
+		<url-pattern>/weixinmp</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

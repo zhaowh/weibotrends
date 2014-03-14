@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
  
 import weibo4j.http.AccessToken;
+import weibo4j.http.Response;
 import weibo4j.model.Paging;
 import weibo4j.model.PostParameter;
 import weibo4j.model.Status;
@@ -151,8 +152,7 @@ public class Weibo implements java.io.Serializable {
 	 * @see <a href="http://open.weibo.com/wiki/2/statuses/friends_timeline">
 	 *      statuses/friends_timeline </a>
 	 */
-	public List<Future<HTTPResponse>> preFriendsTimeline(Integer baseAPP, Integer feature,
-			long sinceId) throws WeiboException {
+	public List<Future<HTTPResponse>> preTimeline(long sinceId) throws WeiboException {
 		List<Future<HTTPResponse>> respList  = new ArrayList<Future<HTTPResponse>>();
 		Paging paging;
 		
@@ -168,28 +168,54 @@ public class Weibo implements java.io.Serializable {
 					client.getAsync(
 					WeiboConfig.getValue("baseURL") + "statuses/friends_timeline.json",
 					new PostParameter[] {
-							new PostParameter("base_app", baseAPP.toString()),
-							new PostParameter("feature", feature.toString()) },
+							new PostParameter("base_app", "0"),
+							new PostParameter("feature", "0") },
 					paging)
 			);
 			
 		}
+		//public timeline
+		respList.add(
+				client.getAsync(
+					WeiboConfig.getValue("baseURL") + "statuses/public_timeline.json",
+					new PostParameter[] {
+							new PostParameter("count", "100")
+						}
+				)
+		);
+		//suggestions favorites
+		respList.add(
+				client.getAsync(
+					WeiboConfig.getValue("baseURL") + "suggestions/favorites/hot.json",
+					new PostParameter[] {
+							new PostParameter("count", "50")
+						}
+				)
+		);
+		//suggestions statuses reorder
+		respList.add(
+				client.getAsync(
+					WeiboConfig.getValue("baseURL") + "suggestions/statuses/reorder.json",
+					new PostParameter[] {
+							new PostParameter("section", "3600"),//
+							new PostParameter("count", "50")
+						}
+				)
+		);			
 		return respList;
 	}	
 	
-	public List<Status> getFriendsTimeline(List<Future<HTTPResponse>> respList) throws WeiboException{
+	public List<Status> getTimeline(List<Future<HTTPResponse>> respList) throws WeiboException{
 		List<Status> list = new ArrayList<Status>();
+		log.finest("get threads: " + respList.size());
 		for (Future<HTTPResponse> f : respList){
 			try{
 				StatusWapper w = Status.constructWapperStatus(this.client.getResponse(f));
 				log.finest("get: " + w.getStatuses().size());
 				list.addAll(w.getStatuses());
-				if (w.getStatuses().size()<TIMELINE_PAGE_SIZE) { //已无数据
-					break;
-				}
 			}catch(Exception ex){
+				log.warning("fetch error: " + ex);
 				ex.printStackTrace();
-				log.warning(ex.toString());
 			}
 		}
 		return list;
@@ -206,21 +232,40 @@ public class Weibo implements java.io.Serializable {
 	 *      href="http://open.weibo.com/wiki/2/statuses/user_timeline">statuses/user_timeline</a>
 	 * @since JDK 1.5
 	 */
-	public Future<HTTPResponse> preRepostsByMe(long sinceId) throws WeiboException{
-		Future<HTTPResponse> response = client.getAsync(
-				WeiboConfig.getValue("baseURL")+"statuses/repost_by_me.json",
+	public List<Future<HTTPResponse>> preRepostsByMe(long sinceId, String userId) throws WeiboException{
+		List<Future<HTTPResponse>> respList  = new ArrayList<Future<HTTPResponse>>();
+		respList.add(
+			client.getAsync(
+				//WeiboConfig.getValue("baseURL")+"statuses/repost_by_me.json",
+				WeiboConfig.getValue("baseURL")+"statuses/user_timeline.json",
 				new PostParameter[] {
 					new PostParameter("since_id", String.valueOf(sinceId)),
-					new PostParameter("count", "100")
+					new PostParameter("count", "100"),
+					new PostParameter("trim_user", "1"),
+					new PostParameter("uid", userId)
 				}
+			)
+		);
+		if (sinceId!=0) respList.add( //取最近5条转发，避免转发老微博遗漏
+				client.getAsync(
+						WeiboConfig.getValue("baseURL")+"statuses/user_timeline.json",
+					new PostParameter[] {
+						new PostParameter("since_id", "0"),
+						new PostParameter("count", "5"),
+						new PostParameter("trim_user", "1"),
+						new PostParameter("uid", userId)
+					}
+				)
 			);
-		return response;
+		return respList;
 	}	
 	
 	public List<Status> getRepostsByMe(Future<HTTPResponse>  future) throws WeiboException{
 		List<Status> list = new ArrayList<Status>();
 		try{
-			StatusWapper w = Status.constructWapperStatus(this.client.getResponse(future));
+			Response res = this.client.getResponse(future);
+			//log.finest(res.asString());
+			StatusWapper w = Status.constructWapperStatus(res);
 			log.finest("get: " + w.getStatuses().size());
 			list.addAll(w.getStatuses());
 		}catch(Exception e){

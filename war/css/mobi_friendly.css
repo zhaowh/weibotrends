@@ -5,7 +5,7 @@
 	@media
 	only screen and (max-width : 599px)
 	{
-		#wrapper .wrapper-in{ width:100%;  min-width:478px;} 
+		#wrapper .wrapper-in{ width:100%;  min-width:360px;} /*478px*/
 		#container{ background:#fff}
 		#container .sidebar{width:0px; display:none;}
 		#container .main{ margin-right:0px; background:white;}
@@ -15,6 +15,7 @@
 		.feed-list .feed-tit feed-filter{font-size:14px;}
 		.feed-list .feed-content {margin-left: 8px;_margin-left: 5px;}
 		.feed-list .feed-main {overflow-y:auto; }
+		.menu{display:none;}
 		.user-pic{display:none;}
 		.user-pic-inner{display:block;}
 	}
@@ -26,7 +27,7 @@
 		#container{ background:#fff } 
 		#container .sidebar{width:0px; display:none;}
 		#container .main{ margin-right:0px; background:white;}
-		
+		.menu{display:block;}
 		.user-pic{display:block;}
 		.user-pic-inner{display:none;}
 		
@@ -39,7 +40,7 @@
 		#container{ background:#fff url(bgimg/user_y_bg.png} 
 		#container .sidebar{float:right; _margin-left:-3px; width:200px; display:block;}
 		#container .main{ margin-right:200px; padding-bottom:10px; _margin-right:197px; _zoom:1;}
-		
+		.menu{display:block;}
 		.user-pic{display:block;}
 		.user-pic-inner{display:none;}
 		
