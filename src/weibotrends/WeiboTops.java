@@ -669,14 +669,13 @@ public class WeiboTops  implements java.io.Serializable {
 		
 
 		if (!reposted) {
-			// 按加速度倒序优先转发最新微博
-			reposted = repostFirst(sortTweets(tops, "byAcc"));
-		}
-		
-		
-		if (!reposted) {
 			// 按速度倒序优先转发最新微博
 			reposted = repostFirst(sortTweets(tops, "bySpeed"));
+		}
+		
+		if (!reposted) {
+			// 按加速度倒序优先转发最新微博
+			reposted = repostFirst(sortTweets(tops, "byAcc"));
 		}
 		
 		
