@@ -1,4 +1,6 @@
-<%@ page contentType="text/html; charset=UTF-8"
+
+
+   <%@ page contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.*" %>
 <%@ page import="java.util.*" %>
@@ -175,6 +177,10 @@
 						<p>
 							<a href="/weibotops?m=rss<%=userId==null?"":"&userId="+userId %>"><img src="/rss_button.gif" border="0" title="RSS" alt="RSS"></img></a>
 						</p>
+						<p>&nbsp;</p> 
+						<script language="javascript" type="text/javascript" src="http://js.users.51.la/16950323.js"></script>
+<noscript><a href="http://www.51.la/?16950323" target="_blank"><img alt="&#x6211;&#x8981;&#x5566;&#x514D;&#x8D39;&#x7EDF;&#x8BA1;" src="http://img.users.51.la/16950323.asp" style="border:none" /></a></noscript>
+
 					</div> 
 				</div> 
 				
