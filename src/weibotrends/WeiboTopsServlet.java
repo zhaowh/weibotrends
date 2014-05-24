@@ -64,20 +64,29 @@ public class WeiboTopsServlet extends HttpServlet {
 		}
 	}	
 	
-	private WeiboTops getWeiboTops(HttpServletRequest req){
+	private WeiboTops getViewWeiboTops(HttpServletRequest req){
 		HttpSession session = req.getSession(true);
 		long userId = 0;
 		User user = (User)session.getAttribute("user");
 		if (req.getParameter("u")!=null){
 			userId = Long.parseLong(req.getParameter("u"));
 			session.setAttribute("userId", Long.valueOf(userId));
-		}else if (user!=null){
-			userId=Long.parseLong(user.getId());
 		}else if (session.getAttribute("userId")!=null){
 			userId = (Long) session.getAttribute("userId");
+		}else if (user!=null){
+			userId=Long.parseLong(user.getId());
 		}
 		return new WeiboTops(userId);
 	}
+	
+	private WeiboTops getMyWeiboTops(HttpServletRequest req){
+		HttpSession session = req.getSession();
+		long userId = 0;
+		User user = (User)session.getAttribute("user");
+		userId=Long.parseLong(user.getId());
+		session.setAttribute("userId", Long.valueOf(userId));
+		return new WeiboTops(userId);
+	}	
 	
 	public void login(HttpServletRequest req, HttpServletResponse resp)throws IOException, ServletException {
 		Oauth oauth = new Oauth();
@@ -111,13 +120,13 @@ public class WeiboTopsServlet extends HttpServlet {
 		resp.sendRedirect("http://weibo.com/logout.php");
 	}
 	public void refresh(HttpServletRequest req, HttpServletResponse resp)throws IOException, ServletException, WeiboException {
-		WeiboTops wt = getWeiboTops(req);
+		WeiboTops wt = getMyWeiboTops(req);
 		wt.searchTopTweets();
 		listTops(req, resp);
 	}
 	
 	public void listTops(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		WeiboTops wt = getWeiboTops(req);
+		WeiboTops wt = getViewWeiboTops(req);
 		String orderType = req.getParameter("order");
 		Collection<Tweet> tweets =  wt.loadTopTweets(orderType);
 		req.setAttribute("weiboTops", wt);
@@ -126,7 +135,7 @@ public class WeiboTopsServlet extends HttpServlet {
 	}	
 	
 	public void rss(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		WeiboTops wt = getWeiboTops(req);
+		WeiboTops wt = getViewWeiboTops(req);
 		String orderType = req.getParameter("order");
 		Collection<Tweet> tweets =  wt.loadTopTweets(orderType);
 		req.setAttribute("weiboTops", wt);
@@ -135,7 +144,7 @@ public class WeiboTopsServlet extends HttpServlet {
 	}	
 	
 	public void showConfig(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		WeiboTops wt = getWeiboTops(req);
+		WeiboTops wt = getMyWeiboTops(req);
 		UserConfig conf = wt.getUserConfig(); 	
 		req.setAttribute("userConfig", conf);
 		req.getRequestDispatcher("main.jsp").forward(req, resp);
@@ -185,7 +194,7 @@ public class WeiboTopsServlet extends HttpServlet {
 	}
 		
 	public void saveConfig(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-		WeiboTops wt = getWeiboTops(req);
+		WeiboTops wt = getMyWeiboTops(req);
 		UserConfig conf = wt.getUserConfig(); 
 		
 		conf.setMinRtCount(getInt(req,"min_rt_count",conf.getMinRtCount()));
