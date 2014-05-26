@@ -1,22 +1,14 @@
 package weibotrends;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import weibo4j.Users;
-import weibo4j.http.AccessToken;
-import weibo4j.model.User;
 import weibo4j.model.WeiboException;
-import weibotrends.weibo4g.Weibo;
 
 @SuppressWarnings("serial")
 public class TaskServlet extends HttpServlet {
@@ -49,6 +41,7 @@ public class TaskServlet extends HttpServlet {
 		WeiboTops wt = new WeiboTops(uid, token);
 		//wt.searchTopTweets();
 		wt.repostTopTweet();
+		
 	}
 	
 

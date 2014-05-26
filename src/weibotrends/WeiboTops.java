@@ -1,6 +1,8 @@
 package weibotrends;
 
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +21,10 @@ import java.util.TreeSet;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import weibo4j.http.AccessToken;
 import weibo4j.model.Status;
 import weibo4j.model.User;
@@ -28,6 +34,10 @@ import weibotrends.dao.DAOFactory;
 import weibotrends.weibo4g.Weibo;
 import weibotrends.weibo4g.model.Count;
 
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 
 public class WeiboTops  implements java.io.Serializable {
@@ -717,6 +727,45 @@ public class WeiboTops  implements java.io.Serializable {
     	return loadTopTweets("byTime");
     }
     
+    
+	private static void createRefreshTask(Queue queue, UserConfig c) {
+		
+			TaskOptions opts = TaskOptions.Builder.withUrl("/task");
+			opts.method(Method.POST);
+			opts.param("m", "refresh_tweets");
+			opts.param("uid", c.getUserId());
+			opts.param("token", c.getAccessToken());
+			queue.add(opts);
+			log.fine(opts.getUrl());
+	}
+	        
+    
+	public static void createAllRefreshTask() {
+		
+		Queue queue = QueueFactory.getDefaultQueue();
+
+		List<UserConfig> list = WeiboTops.getValidUserConfigs();
+		for (UserConfig c : list) {
+			if (c.getAccessToken() == null)
+				continue;
+
+			if (c.getLastRtTime() != null) {
+				long interval = System.currentTimeMillis()
+						- c.getLastRtTime().getTime();
+				long aWeek = 7 * 24 * 60 * 60 * 1000;
+				if (interval > aWeek)
+					continue; // 一周以上未转发，授权已失效
+			}
+
+			createRefreshTask(queue, c);
+		}
+	}
+	
+	public void createRefreshTask() {
+		Queue queue = QueueFactory.getDefaultQueue();
+		createRefreshTask(queue, this.userConfig);
+	}
+	    
 
     public static void main(String[] args){
     	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.SIMPLIFIED_CHINESE);

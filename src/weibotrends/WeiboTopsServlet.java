@@ -110,8 +110,11 @@ public class WeiboTopsServlet extends HttpServlet {
 		WeiboTops weiboTops = new WeiboTops(code);
 		//session.setAttribute("weiboTops", weiboTops);
 		session.setAttribute("user", weiboTops.getUser());
-
-		//listTops(req, resp);
+		
+		//refresh top weibos asyn.
+		weiboTops.createRefreshTask();
+		session.setAttribute("refreshing", "true");
+		
 		resp.sendRedirect("weibotops?m=list");
 	}
 	
@@ -122,7 +125,8 @@ public class WeiboTopsServlet extends HttpServlet {
 	public void refresh(HttpServletRequest req, HttpServletResponse resp)throws IOException, ServletException, WeiboException {
 		WeiboTops wt = getMyWeiboTops(req);
 		wt.searchTopTweets();
-		listTops(req, resp);
+
+		resp.sendRedirect("weibotops?m=list");
 	}
 	
 	public void listTops(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{

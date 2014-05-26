@@ -65,6 +65,13 @@
 %>
 
 <script language="javascript">
+<%
+	if (tweets==null || tweets.isEmpty()){ //可能后台异步加载中，隔10秒刷新
+%>
+	setTimeout("window.location.reload();",10000);
+<%
+	}
+%>
 	function toggleImg(id){
 		/*
 		$(obj).closest(".feed-content").find(".show-img").toggle();
