@@ -205,7 +205,7 @@ public class WeixinService {
 		if (hots!=null && !hots.isEmpty()){
 			int i = 0;
 			for (Tweet t : hots){
-				if (i>=3) {
+				if (i>=1) {
 					Article item = new Article();
 					item.setTitle("更多（点击或发送m）");
 					item.setDescription("更多（点击或发送m）");
