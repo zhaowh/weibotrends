@@ -134,12 +134,14 @@ public class WeiboTops  implements java.io.Serializable {
 		if (durHours == 0) durHours=0.1;
 		if (follows == 0) follows=10;
 		
-		if (reposts > comments * 4){
+		if (reposts > comments * 4){ //只转不评有水军号炒作嫌疑，使用评论数进行修正
 			reposts = comments * 4;
 		}
 
-		//int rtSpeed = (int) (reposts * Math.pow(10000.0/follows, 0.618)  * Math.pow(60.0/durMins,0.618));
-		double rtSpeed = (reposts * Math.pow(10000.0/follows, 0.618)  / durHours);
+		int actives = reposts + comments/4; //活跃度记数。评论数如使用评论人数更准确，此处简单修正		
+		
+		double rtSpeed = (actives * Math.pow(10000.0/follows, 0.618)  * Math.exp(-0.134 * (durHours-1)) );
+		//double rtSpeed = (actives * Math.pow(10000.0/follows, 0.618)  / durHours);
 		return rtSpeed;
 		 
 	}
