@@ -138,7 +138,7 @@ public class WeiboTops  implements java.io.Serializable {
 			reposts = comments * 4;
 		}
 
-		int actives = reposts + comments/4; //活跃度记数。评论数如使用评论人数更准确，此处简单修正		
+		int actives = reposts + comments/2; //活跃度记数。评论数如使用评论人数更准确，此处简单修正		
 		
 		double rtSpeed = (actives * Math.pow(10000.0/follows, 0.618)  * Math.exp(-0.134 * (durHours-1)) );
 		//double rtSpeed = (actives * Math.pow(10000.0/follows, 0.618)  / durHours);
